@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务条摆放/添加-测试网页</title>
+</head>
+<style>
+/*
+用于测试任务拖动的任务网页，测试正常，达到预期目的可以进行下一步的预估
+与任务计划
+2024/10/29
+*/
+section.option{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 30%;
+    width: 20%;
+    opacity: 80%;
+    transition: 2ms;
+    border-radius: 10px;
+    border: 2px solid rgb(179, 195, 174);
+    background-color: rgb(159, 80, 27);
+}
+
+/*生成按钮*/
+section #create{
+    width: 20%;
+    height: 20%;
+    position: absolute;
+    left: 0px;
+    margin: 20px;
+}
+
+section.option #tell{
+    position: absolute;
+    right: -2px;
+    top: 90px;
+    margin: 15px;
+}
+
+/*展示窗口*/
+section#show_window{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    
+    /*添加竖线*/
+    background: linear-gradient(to right, #d5d8f1 2px, transparent 2px);
+    background-size: 10% 100%;
+    
+}
+
+/*任务条*/
+section #program{
+    z-index: 2;
+    transition: 300ms;
+    position: absolute;
+    background-color: rgb(147, 225, 38);
+    width: 9%;
+    height: 8%;
+    margin: 8px;
+    right: 20px;
+    top: 20px;
+    border-radius: 10px;
+}
+
+</style>
+<body>
+<section id="show_window">
+    <div id="program"></div>
+</section>
+<section class="option">
+    <h1 id="show">sample</h1>
+    <button id = "create">create</button>
+    <h1 id="tell">⬆拖动任务条⬆</h1>
+</section>
+</body>
+
+<script>
+//创建任务对象
+const program = document.getElementById("program");
+const borad = document.getElementById("show_window");
+const show = document.getElementById("show");
+const buttonCreate = document.getElementById("create");
+addDraggable(program);
+
+
+//create函数
+buttonCreate.addEventListener("click",function(e){
+    // 创建新的div元素
+    let newElement = document.createElement('div');
+
+    // 设置元素的属性和样式
+    newElement.id = 'program';
+    newElement.style.transition = '300ms';
+    newElement.style.position = 'absolute';
+    newElement.style.backgroundColor = 'rgb(147, 225, 38)';
+    newElement.style.width = '9%';
+    newElement.style.height = '8%';
+    newElement.style.margin = '8px';
+    newElement.style.borderRadius = '10px';
+
+    // 将新元素添加到指定的父元素中
+    document.getElementById('show_window').appendChild(newElement);
+    addDraggable(newElement);
+})
+
+//设立封装监听函数
+function addDraggable(element){
+    element.addEventListener("mousedown",function(event){
+        
+        //直接产生新的任务条
+        buttonCreate.click();
+
+        // 确保按下时没有动画
+        element.style.transition = "0ms"//在任务条拖动时，如果拥有延时属性，所以不要乱动保持在一开始拖动时，保持着0ms的延时
+
+        //获取位移信息
+        let shiftX = event.clientX - element.getBoundingClientRect().left;
+        let shiftY = event.clientY - element.getBoundingClientRect().top;
+
+        //设立回调函数
+        const moveAt = function(pageX,pageY){
+            element.style.left = pageX - shiftX - 10 + 'px';
+            element.style.top = pageY - shiftY - 10 + 'px';
+        }
+        const onMouseMove = function(e){
+            moveAt(e.pageX,e.pageY);
+        }
+
+        //鼠标移动回调
+        document.addEventListener("mousemove",onMouseMove);
+
+        //鼠标松开回调
+        document.addEventListener("mouseup",function(e){
+            
+            //开启延迟属性
+            element.style.transition = '300ms';
+
+            //用于附着的成员变量
+            var doubleEle = element.getBoundingClientRect().left - borad.getBoundingClientRect().left;
+            var board_width = borad.offsetWidth / 10;
+
+            //开始判断附着在哪一部分
+            if(doubleEle < board_width / 2){
+                element.style.left = 0 + '%';
+            }else{
+                //0 10 20 30 40 50 60 70 80 90
+                var tmp = Math.floor(doubleEle / board_width);
+                var long_loc =  (Math.floor(doubleEle / board_width)) * board_width
+                if(doubleEle - long_loc > board_width / 2){
+                    element.style.left = (tmp + 1) * 10  + '%';
+                }else{
+                    element.style.left = tmp * 10  + '%';
+                }
+            }
+
+            //取消回调
+            document.removeEventListener('mousemove',onMouseMove);   
+        },{once: true});
+    });
+}
+
+
+
+// program.addEventListener("mousedown",function(e){
+
+//     // 确保按下时没有动画                
+//     program.style.transition = '0ms';//在任务条拖动时，如果拥有延时属性，所以不要乱动保持在一开始拖动时，保持着0ms的延时
+
+//     //获取位移信息
+//     let shiftX = e.clientX - program.getBoundingClientRect().left;
+//     let shiftY = e.clientY - program.getBoundingClientRect().top;
+
+//     //设立回调函数
+//     const moveAt = function(pageX,pageY){
+//         program.style.left = pageX - shiftX  - 10+ 'px';
+//         program.style.top = pageY - shiftY -10+ 'px';
+//     }   
+
+//     const onMouseMove = function(e){
+//         moveAt(e.pageX,e.pageY);
+//     }
+
+//     //鼠标移动回调
+//     document.addEventListener("mousemove",onMouseMove);
+
+//     //鼠标松开回调
+//     document.addEventListener('mouseup',function(event){
+
+//         //开启延时属性
+//         program.style.transition = '300ms';//这时需要给program属性开启延时属性，从而看起来丝滑
+
+//         //用于附着的成员变量
+//         var doubleEle = program.getBoundingClientRect().left - borad.getBoundingClientRect().left;
+//         var board_width = borad.offsetWidth / 10;
+        
+//         //开始判断附着在哪一部分
+//         if(doubleEle < board_width / 2){
+//             program.style.left = 0 + '%';
+//         }else{
+//             //0 10 20 30 40 50 60 70 80 90
+//             var tmp = Math.floor(doubleEle / board_width);
+//             var long_loc =  (Math.floor(doubleEle / board_width)) * board_width
+//             if(doubleEle - long_loc > board_width / 2){
+//                 program.style.left = (tmp + 1) * 10  + '%';
+//             }else{
+//                 program.style.left = tmp * 10  + '%';
+//             }
+//         }
+//         show.textContent = doubleEle - long_loc;
+//         document.removeEventListener('mousemove',onMouseMove);   
+//     },{once: true});
+
+// })
+
+</script>
+</html>
