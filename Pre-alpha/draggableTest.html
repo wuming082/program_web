@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.displayBoard{
+  position: absolute;
+  top: 0%;
+  left: 0px;
+  right: 0px;
+  height: 400px;
+  background: lightgray;
+}
+.left{
+  z-index: 0;
+  position: absolute;
+  top: 10%;
+  left: -16%;
+  height: 30px;
+  width: 30px;
+  background-color: rgb(86, 141, 142);
+  border-radius: 50%;
+}
+.draggable {
+  width: 100px;
+  height: 40px;
+  background: lightblue;
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  cursor: move;
+  border-radius: 10px;
+
+}
+.draggable p{
+  position: fixed;
+  margin: 10px;
+
+}
+.buttonList{
+  position: absolute;
+  top: 59%;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 400px;
+  background: rgb(65, 118, 158);
+}
+.create{
+  margin: 10px;
+}
+
+</style>
+<title>元素拖拽</title>
+</head>
+<body>
+
+<section class="displayBoard">
+  <div id="mydiv" class="draggable">
+    <div class="left"></div>
+    <div class="right"></div>
+  </div>
+</section>
+<section class="buttonList">
+<button class="create">
+  <p>click_create</p>
+</button>
+</section>
+
+<script>
+document.getElementsByClassName("")
+document.getElementsByClassName("create")[0].addEventListener("click", function() {
+    addElement();
+});
+
+function addElement() {
+  var container = document.getElementsByClassName("displayBoard")[0];
+
+  var Newelem = document.createElement("div");
+  Newelem.className = "draggable";
+  Newelem.innerHTML = '<div class="left">sample</div><div class="right">';
+
+  container.appendChild(Newelem);
+  dragElement(Newelem);
+
+}
+
+dragElement(document.getElementById("mydiv"));
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  elmnt.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // 新的位置
+    var newTop = elmnt.offsetTop - pos2;
+    var newLeft = elmnt.offsetLeft - pos1;
+
+    // 边界检查
+    if (newTop >= 0 && newTop <= elmnt.parentElement.clientHeight - elmnt.clientHeight) {
+      elmnt.style.top = newTop + "px";
+    }
+    if (newLeft >= 0 && newLeft <= elmnt.parentElement.clientWidth - elmnt.clientWidth) {
+      elmnt.style.left = newLeft + "px";
+    }
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+</script>
+
+</body>
+</html>
