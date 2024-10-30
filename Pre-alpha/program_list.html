@@ -73,7 +73,7 @@ section #program_sample{
     z-index: 2;
     transition: 300ms;
     position: absolute;
-    background-color: rgb(153, 161, 142);
+    background-color: rgb(47, 48, 45);
     width: 9%;
     height: 8%;
     margin: 8px;
@@ -117,48 +117,80 @@ const show = document.getElementById("show");
 const buttonCreate = document.getElementById("create");
 const program_sample = document.getElementById("program_sample");
 const detail = document.getElementById("list");
-borad.addEventListener("contextmenu",(e) =>{
+
+addEventListener("contextmenu",(e) =>{
     e.preventDefault();
-    const target = document.getElementById("uniqueId");
-    if(e.target == target){
+    const target = e.target.closest(".DraggableContainer");
+    const target_menu = document.getElementById("uniqueId");
+    if(e.target.classList.contains('draggable-container')){
         if(e.button == 2){
-            const newElement = document.createElement('div');
-            newElement.style.zIndex = "4";
-            newElement.id = "mune";
-            newElement.style.width = '200px';
-            newElement.style.height = '300px';
-            newElement.style.backgroundColor = 'black';
-            newElement.style.borderRadius = "10px"
-            newElement.style.position = 'absolute';
-            newElement.style.left = `${event.pageX}px`;
-            newElement.style.top = `${event.pageY}px`;
-            document.body.appendChild(newElement);
+            new Menu_list("show_window",e.pageX,e.pageY);
         }
-    }else{
-        const newElement = document.createElement('div');
-            newElement.style.zIndex = "4";
-            newElement.id = "mune";
-            newElement.style.width = '200px';
-            newElement.style.height = '300px';
-            newElement.style.backgroundColor = 'red';
-            newElement.style.borderRadius = "10px"
-            newElement.style.position = 'absolute';
-            newElement.style.left = `${event.pageX}px`;
-            newElement.style.top = `${event.pageY}px`;
-            document.body.appendChild(newElement);
     }
+
 })
 
-borad.addEventListener("click",(e)=>{
-    
+
+//测试
+document.addEventListener("mousedown",function(event){
+    const mune_list = document.getElementById("mune1");
+    if(!(event.target == mune_list)){
+        mune_list.remove();
+    }
 })
 
 //菜单类
 class Menu_list{
-    constructor(containerID){
-        this.menu = document.createElement("div");
+    constructor(containerID,pageX,pageY){
+        this.continer = document.getElementById(containerID);
 
+        //设定菜单栏尺寸
+        var width = 200 ,height = 260;
+
+        this.menu = document.createElement("div");
+        this.menu.style.zIndex = "2";
+        this.menu.style.borderRadius = "10px";
+        this.menu.id = "mune1";
+        this.menu.style.width = width + 'px';
+        this.menu.style.height = height + 'px';
+        this.menu.style.backgroundColor = "rgb(47, 48, 45)";
+        this.menu.style.position = "absolute";
+        //this.menu.style.transition = "200ms";
+        
+        //环境信息
+        this.width = this.continer.offsetWidth;
+        this.height = this.continer.offsetHeight;
+
+        //菜单信息
+        this.element_W = width;
+        this.element_H = height;
+        
+        //位置信息
+        this.pageX = pageX;
+        this.pageY = pageY;
+
+        this.addElement_judge(this.menu);
     }
+
+    //生成函数
+    addElement_judge(element){
+        
+        //宽度差值 （从左到右
+        var width_diff =  this.width - this.pageX;
+
+        //高度差值 （自上而下
+        var height_diff = this.height - this.pageY;
+
+        //判断是否越界
+        if(width_diff < this.element_W){this.pageX =  this.width - this.element_W - 20;}
+        if(height_diff < this.element_H){this.pageY =  this.height - this.element_H - 20;}
+        element.style.top = this.pageY + 'px';
+        element.style.left = this.pageX + 'px';
+        
+        this.continer.appendChild(element);
+    }
+
+
 }
 
 //创建任务条的类
@@ -166,14 +198,16 @@ class DraggableContainer{
     constructor(containerID){
         this.continer = document.getElementById(containerID);
 
+        var width = 9 ,height = 8;
         this.element1 = document.createElement("div");
+        this.element1.className = "draggable-container";
         this.element1.id = "uniqueId"; // 赋予id属性
         this.element1.style.zIndex = "2";
         this.element1.style.transition = "300ms";
         this.element1.style.position = "absolute";
         this.element1.style.backgroundColor = "rgb(147, 225, 38)";
-        this.element1.style.width = "9%";
-        this.element1.style.height = "8%";
+        this.element1.style.width = width + "%";
+        this.element1.style.height = height + "%";
         this.element1.style.margin = "8px";
         this.element1.style.right = "20px";
         this.element1.style.top = "50px"
@@ -186,37 +220,25 @@ class DraggableContainer{
         //this.addsection_light(this.element1);
         this.addDraggable(this.element1);
 
-        this.program = document.createElement('div');
-        this.program.style.width = '300px';
-        this.program.style.height = '300px';
-        this.program.style.position = "absolute";
-        this.program.style.left = '60px';
-        this.program.style.backgroundColor = 'rgb(153, 161, 142)';
-        this.program.style.transition = "200ms";
-        this.program.style.display = "none";
-        this.program.style.opacity = "0%";
-
-        this.element1.appendChild(this.program);
-
-    }
-    program_show(){
-        this.program.style.display = "block"
-
-        setTimeout(() => {
-            this.program.style.opacity = "100%";
-            this.program.style.left = "120px";
-        }, 100);
-
     }
 
-    program_diapper(){
-        this.program.style.left = "60px";
-        this.program.style.opacity = "0%";
-
-    }
-    
     //被点击属性 左键 附着元素
     //测试版本 预计淘汰
+    // program_show(){
+    //     this.program.style.display = "block"
+
+    //     setTimeout(() => {
+    //         this.program.style.opacity = "100%";
+    //         this.program.style.left = "120px";
+    //     }, 100);
+
+    // }
+
+    // program_diapper(){
+    //     this.program.style.left = "60px";
+    //     this.program.style.opacity = "0%";
+
+    // }
     // addsection_light(element){
     //     element.addEventListener("mousemove",() =>{
     //         this.beMove = true;
@@ -241,9 +263,7 @@ class DraggableContainer{
 
     //增加拖动函数
     addDraggable(element){
-        
         element.addEventListener("mousedown",(event) =>{
-            this.program_diapper();
             if(event.button == 0){
                 this.beMove = false;
                 // 确保按下时没有动画
@@ -255,9 +275,25 @@ class DraggableContainer{
 
                 //设立回调函数
                 const moveAt = function(pageX,pageY){
-                    //this.beMove = true;
-                    element.style.left = pageX - shiftX - 10 + 'px';
-                    element.style.top = pageY - shiftY - 10 + 'px';
+
+                    let newLeft = pageX - shiftX;
+                    let newTop = pageY - shiftY;
+                    
+                    const continer_tmp = borad.getBoundingClientRect();
+
+                    const element_tmp = element.getBoundingClientRect();
+                    const element_W = element_tmp.width;
+                    const element_H = element_tmp.height;
+                    
+                    //设立边界
+                    if(newLeft < 0) newLeft = 0;
+                    if(newTop < 0) newTop = 0;
+                    if(newLeft + element_W > continer_tmp.width) newLeft = continer_tmp.width - element_W;
+                    if(newTop + element_H > continer_tmp.height) newTop = continer_tmp.height - element_H; 
+        
+
+                    element.style.left = newLeft - 10 + 'px';
+                    element.style.top = newTop - 10 + 'px';
                 }
                 const onMouseMove = (e) =>{
                     this.beMove = true;
@@ -295,6 +331,7 @@ class DraggableContainer{
 
                     //取消回调  
                     document.removeEventListener('mousemove',onMouseMove);   
+
                 },{once: true});
             }
         });
