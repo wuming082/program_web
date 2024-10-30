@@ -57,7 +57,7 @@ section#show_window{
 /*任务条*/
 section #program{
     z-index: 2;
-    transition: 300ms;
+    transition: 100ms;
     position: absolute;
     background-color: rgb(147, 225, 38);
     width: 9%;
@@ -68,10 +68,39 @@ section #program{
     border-radius: 10px;
 }
 
+/*样本任务条*/
+section #program_sample{
+    z-index: 2;
+    transition: 300ms;
+    position: absolute;
+    background-color: rgb(153, 161, 142);
+    width: 9%;
+    height: 8%;
+    margin: 8px;
+    left: 20px;
+    top: 20px;
+    border-radius: 10px;
+}
+
+#program_sample #list{
+    
+    opacity: 0%;/*目标值80%*/
+    position: absolute;
+    border-radius: 10px;
+    top: 50px;
+    left: 30px;
+    width: 300px;
+    height: 300px;
+    background-color: rgb(164, 165, 182);
+    transition: 1000ms;
+}
+
 </style>
 <body>
 <section id="show_window">
-    <div id="program"></div>
+    <div id="program_sample">
+        <div id="list"></div>
+    </div>
 </section>
 <section class="option">
     <h1 id="show">sample</h1>
@@ -86,27 +115,235 @@ const program = document.getElementById("program");
 const borad = document.getElementById("show_window");
 const show = document.getElementById("show");
 const buttonCreate = document.getElementById("create");
-addDraggable(program);
+const program_sample = document.getElementById("program_sample");
+const detail = document.getElementById("list");
+borad.addEventListener("contextmenu",(e) =>{
+    e.preventDefault();
+    const target = document.getElementById("uniqueId");
+    if(e.target == target){
+        if(e.button == 2){
+            const newElement = document.createElement('div');
+            newElement.style.zIndex = "4";
+            newElement.id = "mune";
+            newElement.style.width = '200px';
+            newElement.style.height = '300px';
+            newElement.style.backgroundColor = 'black';
+            newElement.style.borderRadius = "10px"
+            newElement.style.position = 'absolute';
+            newElement.style.left = `${event.pageX}px`;
+            newElement.style.top = `${event.pageY}px`;
+            document.body.appendChild(newElement);
+        }
+    }else{
+        const newElement = document.createElement('div');
+            newElement.style.zIndex = "4";
+            newElement.id = "mune";
+            newElement.style.width = '200px';
+            newElement.style.height = '300px';
+            newElement.style.backgroundColor = 'red';
+            newElement.style.borderRadius = "10px"
+            newElement.style.position = 'absolute';
+            newElement.style.left = `${event.pageX}px`;
+            newElement.style.top = `${event.pageY}px`;
+            document.body.appendChild(newElement);
+    }
+})
+
+borad.addEventListener("click",(e)=>{
+    
+})
+
+//菜单类
+class Menu_list{
+    constructor(containerID){
+        this.menu = document.createElement("div");
+
+    }
+}
+
+//创建任务条的类
+class DraggableContainer{
+    constructor(containerID){
+        this.continer = document.getElementById(containerID);
+
+        this.element1 = document.createElement("div");
+        this.element1.id = "uniqueId"; // 赋予id属性
+        this.element1.style.zIndex = "2";
+        this.element1.style.transition = "300ms";
+        this.element1.style.position = "absolute";
+        this.element1.style.backgroundColor = "rgb(147, 225, 38)";
+        this.element1.style.width = "9%";
+        this.element1.style.height = "8%";
+        this.element1.style.margin = "8px";
+        this.element1.style.right = "20px";
+        this.element1.style.top = "50px"
+        this.element1.style.borderRadius = "10px";
+
+        this.light_option = false;
+        this.beMove = false;
+
+        this.continer.appendChild(this.element1);
+        //this.addsection_light(this.element1);
+        this.addDraggable(this.element1);
+
+        this.program = document.createElement('div');
+        this.program.style.width = '300px';
+        this.program.style.height = '300px';
+        this.program.style.position = "absolute";
+        this.program.style.left = '60px';
+        this.program.style.backgroundColor = 'rgb(153, 161, 142)';
+        this.program.style.transition = "200ms";
+        this.program.style.display = "none";
+        this.program.style.opacity = "0%";
+
+        this.element1.appendChild(this.program);
+
+    }
+    program_show(){
+        this.program.style.display = "block"
+
+        setTimeout(() => {
+            this.program.style.opacity = "100%";
+            this.program.style.left = "120px";
+        }, 100);
+
+    }
+
+    program_diapper(){
+        this.program.style.left = "60px";
+        this.program.style.opacity = "0%";
+
+    }
+    
+    //被点击属性 左键 附着元素
+    //测试版本 预计淘汰
+    // addsection_light(element){
+    //     element.addEventListener("mousemove",() =>{
+    //         this.beMove = true;
+    //     });
+    //     element.addEventListener("mouseup",(event) =>{
+    //         if(event.button == 0){
+    //             if(this.beMove == false){
+    //                 if(this.light_option){
+    //                     //消失
+    //                     this.program_diapper();
+    //                     this.light_option = false;
+    //                 }else{
+    //                     //弹出
+    //                     this.program_show();
+    //                     this.light_option = true;
+    //                 }   
+    //             }
+    //             this.beMove = false;
+    //         }
+    //     });
+    // }
+
+    //增加拖动函数
+    addDraggable(element){
+        
+        element.addEventListener("mousedown",(event) =>{
+            this.program_diapper();
+            if(event.button == 0){
+                this.beMove = false;
+                // 确保按下时没有动画
+                element.style.transition = "0ms"//在任务条拖动时，如果拥有延时属性，所以不要乱动保持在一开始拖动时，保持着0ms的延时
+
+                //获取位移信息
+                let shiftX = event.clientX - element.getBoundingClientRect().left;
+                let shiftY = event.clientY - element.getBoundingClientRect().top;
+
+                //设立回调函数
+                const moveAt = function(pageX,pageY){
+                    //this.beMove = true;
+                    element.style.left = pageX - shiftX - 10 + 'px';
+                    element.style.top = pageY - shiftY - 10 + 'px';
+                }
+                const onMouseMove = (e) =>{
+                    this.beMove = true;
+                    moveAt(e.pageX,e.pageY);
+                }
+
+                //鼠标移动回调
+                setTimeout(() => {
+                    document.addEventListener("mousemove",onMouseMove);
+                }, 20);
+
+                //鼠标松开回调
+                document.addEventListener("mouseup",(e) =>{
+
+                    //开启延迟属性
+                    element.style.transition = '300ms';
+
+                    //用于附着的成员变量
+                    var doubleEle = element.getBoundingClientRect().left - borad.getBoundingClientRect().left;
+                    var board_width = borad.offsetWidth / 10;
+
+                    //开始判断附着在哪一部分
+                    if(doubleEle < board_width / 2){
+                        element.style.left = 0 + '%';
+                    }else{
+                        //0 10 20 30 40 50 60 70 80 90
+                        var tmp = Math.floor(doubleEle / board_width);
+                        var long_loc =  (Math.floor(doubleEle / board_width)) * board_width
+                        if(doubleEle - long_loc > board_width / 2){
+                            element.style.left = (tmp + 1) * 10  + '%';
+                        }else{  
+                            element.style.left = tmp * 10  + '%';   
+                        }   
+                    }   
+
+                    //取消回调  
+                    document.removeEventListener('mousemove',onMouseMove);   
+                },{once: true});
+            }
+        });
+    }
+}
+
+new DraggableContainer("show_window");
+
+
+//任务详情展示hover aphla
+program_sample.addEventListener("mousemove",function(e){
+
+    detail.style.opacity = "0%";
+    detail.style.transition = "300ms";
+    detail.style.display = "block";
+    detail.style.opacity = "80%";
+})
+
+function moveoutFunc(event){
+    if (event.relatedTarget != detail && event.relatedTarget != program_sample){
+        detail.style.opacity = "0%"
+        setTimeout(function(){
+            detail.style.display = "none";
+        }, 300)
+    }
+}
+detail.addEventListener("mouseout",moveoutFunc);
+program_sample.addEventListener("mouseout",moveoutFunc);
 
 
 //create函数
 buttonCreate.addEventListener("click",function(e){
-    // 创建新的div元素
-    let newElement = document.createElement('div');
+    new DraggableContainer("show_window");
 
-    // 设置元素的属性和样式
-    newElement.id = 'program';
-    newElement.style.transition = '300ms';
-    newElement.style.position = 'absolute';
-    newElement.style.backgroundColor = 'rgb(147, 225, 38)';
-    newElement.style.width = '9%';
-    newElement.style.height = '8%';
-    newElement.style.margin = '8px';
-    newElement.style.borderRadius = '10px';
+    // 创建新的div元素
+
+    // let newElement = document.createElement('div');
+
+    // // 设置元素的属性和样式
+    // newElement.id = 'program';
+    // newElement.style.transition = '300ms';
+    // newElement.style.position = 'absolute';
+    // newElement.style.backgroundColor = 'rgb(147, 225, 38)';
+    // newElement.style.width = '9%';
+    // newElement.style.height = '8%';
+    // newElement.style.margin = '8px';
+    // newElement.style.borderRadius = '10px';
 
     // 将新元素添加到指定的父元素中
-    document.getElementById('show_window').appendChild(newElement);
-    addDraggable(newElement);
 })
 
 //设立封装监听函数
@@ -165,58 +402,6 @@ function addDraggable(element){
     });
 }
 
-
-
-// program.addEventListener("mousedown",function(e){
-
-//     // 确保按下时没有动画                
-//     program.style.transition = '0ms';//在任务条拖动时，如果拥有延时属性，所以不要乱动保持在一开始拖动时，保持着0ms的延时
-
-//     //获取位移信息
-//     let shiftX = e.clientX - program.getBoundingClientRect().left;
-//     let shiftY = e.clientY - program.getBoundingClientRect().top;
-
-//     //设立回调函数
-//     const moveAt = function(pageX,pageY){
-//         program.style.left = pageX - shiftX  - 10+ 'px';
-//         program.style.top = pageY - shiftY -10+ 'px';
-//     }   
-
-//     const onMouseMove = function(e){
-//         moveAt(e.pageX,e.pageY);
-//     }
-
-//     //鼠标移动回调
-//     document.addEventListener("mousemove",onMouseMove);
-
-//     //鼠标松开回调
-//     document.addEventListener('mouseup',function(event){
-
-//         //开启延时属性
-//         program.style.transition = '300ms';//这时需要给program属性开启延时属性，从而看起来丝滑
-
-//         //用于附着的成员变量
-//         var doubleEle = program.getBoundingClientRect().left - borad.getBoundingClientRect().left;
-//         var board_width = borad.offsetWidth / 10;
-        
-//         //开始判断附着在哪一部分
-//         if(doubleEle < board_width / 2){
-//             program.style.left = 0 + '%';
-//         }else{
-//             //0 10 20 30 40 50 60 70 80 90
-//             var tmp = Math.floor(doubleEle / board_width);
-//             var long_loc =  (Math.floor(doubleEle / board_width)) * board_width
-//             if(doubleEle - long_loc > board_width / 2){
-//                 program.style.left = (tmp + 1) * 10  + '%';
-//             }else{
-//                 program.style.left = tmp * 10  + '%';
-//             }
-//         }
-//         show.textContent = doubleEle - long_loc;
-//         document.removeEventListener('mousemove',onMouseMove);   
-//     },{once: true});
-
-// })
 
 </script>
 </html>
