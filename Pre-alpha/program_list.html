@@ -73,7 +73,7 @@ section #program_sample{
     z-index: 2;
     transition: 300ms;
     position: absolute;
-    background-color: rgb(47, 48, 45);
+    background-color: rgb(232, 129, 74);
     width: 9%;
     height: 8%;
     margin: 8px;
@@ -95,17 +95,30 @@ section #program_sample{
     transition: 1000ms;
 }
 
+#line_sample{
+    width: 100px;
+    height: 7px; /*大概厚度*/
+    position: absolute;
+    top: 30px;
+    left: 180px;
+    background-color: rgb(175, 175, 165);
+}
 </style>
 <body>
 <section id="show_window">
     <div id="program_sample">
         <div id="list"></div>
     </div>
+    <div id="line_sample"></div>
 </section>
 <section class="option">
     <h1 id="show">sample</h1>
     <button id = "create">create</button>
+    <button id = "Link">Link</button>
     <h1 id="tell">⬆拖动任务条⬆</h1>
+    <div>
+        <input type="text" id="userInput" placeholder="在此输入...">
+    </div>
 </section>
 </body>
 
@@ -117,19 +130,24 @@ const show = document.getElementById("show");
 const buttonCreate = document.getElementById("create");
 const program_sample = document.getElementById("program_sample");
 const detail = document.getElementById("list");
+const Link = document.getElementById('Link');
+
+var countProgram = 1;
+var countProgram_line = 1;
 
 addEventListener("contextmenu",(e) =>{
     e.preventDefault();
-    const target = e.target.closest(".DraggableContainer");
-    const target_menu = document.getElementById("uniqueId");
     if(e.target.classList.contains('draggable-container')){
         if(e.button == 2){
-            new Menu_list("show_window",e.pageX,e.pageY);
+            const element_val = e.target.dataset.element_val;
+            new Menu_list("show_window",e.pageX,e.pageY,e.target.id,e.target);
         }
     }
-
 })
 
+Link.addEventListener('click',(e) =>{
+    new program_line("Program1","Program2");
+})
 
 //测试
 document.addEventListener("mousedown",function(event){
@@ -139,14 +157,129 @@ document.addEventListener("mousedown",function(event){
     }
 })
 
+//任务进度线
+/*
+        /----------------------------/
+
+            start ------
+                        |
+                         ---- end
+
+        /----------------------------/
+ */
+
+//第一版aplha 2024/10/31 我觉得我不会在最终使用这一版的任务线类
+class program_line{
+    constructor(program_start,program_end){
+
+        //获取容器
+        this.continer_start = document.getElementById(program_start);
+        this.continer_end = document.getElementById(program_end);
+
+
+        //当目标元素，起始元素和终点元素，任意一个被鼠标移动，就会产生回调
+        this.transverse();
+        this.continer_start.addEventListener('mousemove',(e) =>{
+            this.updateLine();
+        })
+
+        this.continer_end.addEventListener('mousemove',(e) => {
+            this.updateLine();
+        })
+
+
+    }
+
+    //任务指引线的成员变量 两个横线条一个竖线条
+    transverse(){
+        
+        var conut = countProgram_line++;
+
+        //创建元素
+        this.transverse_01 = document.createElement("div");
+        this.Vertical_01 = document.createElement("div");
+        this.transverse_02 = document.createElement("div");
+        
+        //transverse_01元素
+        this.transverse_01.style.position = 'absolute';
+        this.transverse_01.style.backgroundColor = 'black';
+        this.transverse_01.id = `line_${conut}`;
+
+        //transverse_02元素
+        this.transverse_02.style.position = 'absolute';
+        this.transverse_02.style.backgroundColor = 'black';
+        this.transverse_02.id = `line_${conut}`;
+
+        //Vertical_01元素
+        this.Vertical_01.style.position = 'absolute';
+        this.Vertical_01.style.backgroundColor = 'black';
+        this.Vertical_01.style.id = `line_${conut}`;
+
+        this.continer_start.appendChild(this.transverse_01);
+        this.transverse_01.appendChild(this.Vertical_01);
+        this.Vertical_01.appendChild(this.transverse_02);
+        this.updateLine();
+    }
+
+    //更新竖线条和横线条的长宽函数
+    updateLine(){
+        //获取start元素位置
+        const lectE1 = this.continer_start.getBoundingClientRect();
+        const lectE2 = this.continer_end.getBoundingClientRect();
+
+        //获取起始点位置
+        const start_x = lectE1.left + lectE1.width;
+        const start_y = lectE1.top + lectE1.height / 2;
+
+        //获取终点位置
+        const end_x = lectE2.left;
+        const end_y = lectE2.top + lectE2.height / 2;
+
+        //计算中值
+        const midX = (start_x + end_x) / 2;
+        if(start_x >= end_x){
+            this.transverse_01.remove();
+            this.transverse_02.remove();
+        }
+        this.transverse_01.style.left = `${lectE1.width}px`;
+        this.transverse_01.style.top = `${lectE1.height / 2}px`;
+        this.transverse_01.style.width = `${Math.abs(midX - start_x)}px`;
+        this.transverse_01.style.height = '4px';
+
+        this.transverse_02.style.left = '0px';
+        if(start_y <= end_y){
+            this.transverse_02.style.top = `${Math.abs(start_y - end_y)}px`;
+            this.transverse_02.style.bottom = '0px';
+        }else{
+            this.transverse_02.style.bottom = `${-Math.abs(start_y - end_y)}px`;
+            this.transverse_02.style.top = '0px';
+        }
+        this.transverse_02.style.width = `${Math.abs(midX - end_x) + 20}px`;
+        this.transverse_02.style.height = '4px';
+
+        if(start_y <= end_y){
+            this.Vertical_01.style.top = '0px';
+        }else{
+            this.Vertical_01.style.top = `${-Math.abs(start_y - end_y)}px`;
+        }
+        this.Vertical_01.style.right = '0px';
+        this.Vertical_01.style.height = `${Math.abs(start_y - end_y)}px`;
+        this.Vertical_01.style.width = '5px';
+    }
+
+    
+}
+
+
+
+
 //菜单类
 class Menu_list{
-    constructor(containerID,pageX,pageY){
+    constructor(containerID,pageX,pageY,numsT,targetelemet){
         this.continer = document.getElementById(containerID);
 
         //设定菜单栏尺寸
         var width = 200 ,height = 260;
-
         this.menu = document.createElement("div");
         this.menu.style.zIndex = "2";
         this.menu.style.borderRadius = "10px";
@@ -156,7 +289,7 @@ class Menu_list{
         this.menu.style.backgroundColor = "rgb(47, 48, 45)";
         this.menu.style.position = "absolute";
         //this.menu.style.transition = "200ms";
-        
+
         //环境信息
         this.width = this.continer.offsetWidth;
         this.height = this.continer.offsetHeight;
@@ -164,12 +297,51 @@ class Menu_list{
         //菜单信息
         this.element_W = width;
         this.element_H = height;
-        
+
         //位置信息
         this.pageX = pageX;
         this.pageY = pageY;
 
+        //在页面上会出现这个菜单，judge功能就是，使菜单生成的时候不出界
         this.addElement_judge(this.menu);
+
+        //初始化成员变量 这个是显示被右击的元素的id名称的文本元素
+        this.info = document.createElement("h1");
+        this.info.style.backgroundColor = "rgb(162, 232, 23)";
+        this.info.style.position = 'absolute';
+        this.info.style.top = "-8px";
+        this.info.style.left = "8px";
+        this.info.style.right = "8px";
+        this.info.style.borderRadius = "8px";
+        this.info.textContent = `${numsT}`;
+        this.menu.appendChild(this.info);
+
+        //生成删除按钮函数 targetelement为被右击的对象
+        this.createElement(targetelemet);
+        
+    }
+
+    createElement(element){
+        this.buttonRe = document.createElement("div");
+        this.buttonRe.style.zIndex = "4";
+        this.buttonRe.style.backgroundColor = "rgb(232, 129, 74)";
+        this.buttonRe.style.position = 'absolute';
+        this.buttonRe.style.left = "8px";
+        this.buttonRe.style.right = '8px';
+        this.buttonRe.style.bottom = "8px";
+        this.buttonRe.style.height = "40px";
+        this.buttonRe.style.borderRadius = "8px";
+
+        // 阻止事件冒泡到document
+        this.buttonRe.addEventListener('mousedown', (e) => {
+             e.stopPropagation();
+        })
+        this.buttonRe.addEventListener('click',()=>{
+            element.remove();
+            this.menu.remove();
+        })
+        this.menu.appendChild(this.buttonRe);
+
     }
 
     //生成函数
@@ -198,10 +370,13 @@ class DraggableContainer{
     constructor(containerID){
         this.continer = document.getElementById(containerID);
 
+        this.element_val = countProgram++;
+        this.delet = false;
+
         var width = 9 ,height = 8;
         this.element1 = document.createElement("div");
-        this.element1.className = "draggable-container";
-        this.element1.id = "uniqueId"; // 赋予id属性
+        this.element1.className = "draggable-container"; 
+        this.element1.id = `Program${this.element_val}`; // 赋予id属性
         this.element1.style.zIndex = "2";
         this.element1.style.transition = "300ms";
         this.element1.style.position = "absolute";
@@ -212,6 +387,10 @@ class DraggableContainer{
         this.element1.style.right = "20px";
         this.element1.style.top = "50px"
         this.element1.style.borderRadius = "10px";
+        this.element1.dataset.element_val =  this.element_val;
+
+        //元素位置 // 用于箭头指引
+
 
         this.light_option = false;
         this.beMove = false;
@@ -222,50 +401,10 @@ class DraggableContainer{
 
     }
 
-    //被点击属性 左键 附着元素
-    //测试版本 预计淘汰
-    // program_show(){
-    //     this.program.style.display = "block"
-
-    //     setTimeout(() => {
-    //         this.program.style.opacity = "100%";
-    //         this.program.style.left = "120px";
-    //     }, 100);
-
-    // }
-
-    // program_diapper(){
-    //     this.program.style.left = "60px";
-    //     this.program.style.opacity = "0%";
-
-    // }
-    // addsection_light(element){
-    //     element.addEventListener("mousemove",() =>{
-    //         this.beMove = true;
-    //     });
-    //     element.addEventListener("mouseup",(event) =>{
-    //         if(event.button == 0){
-    //             if(this.beMove == false){
-    //                 if(this.light_option){
-    //                     //消失
-    //                     this.program_diapper();
-    //                     this.light_option = false;
-    //                 }else{
-    //                     //弹出
-    //                     this.program_show();
-    //                     this.light_option = true;
-    //                 }   
-    //             }
-    //             this.beMove = false;
-    //         }
-    //     });
-    // }
-
     //增加拖动函数
     addDraggable(element){
         element.addEventListener("mousedown",(event) =>{
             if(event.button == 0){
-                this.beMove = false;
                 // 确保按下时没有动画
                 element.style.transition = "0ms"//在任务条拖动时，如果拥有延时属性，所以不要乱动保持在一开始拖动时，保持着0ms的延时
 
@@ -301,9 +440,7 @@ class DraggableContainer{
                 }
 
                 //鼠标移动回调
-                setTimeout(() => {
-                    document.addEventListener("mousemove",onMouseMove);
-                }, 20);
+                document.addEventListener("mousemove",onMouseMove);
 
                 //鼠标松开回调
                 document.addEventListener("mouseup",(e) =>{
@@ -333,8 +470,10 @@ class DraggableContainer{
                     document.removeEventListener('mousemove',onMouseMove);   
 
                 },{once: true});
+                
             }
         });
+        element.ondragstart = () => false;
     }
 }
 
@@ -342,48 +481,33 @@ new DraggableContainer("show_window");
 
 
 //任务详情展示hover aphla
-program_sample.addEventListener("mousemove",function(e){
+// program_sample.addEventListener("mousemove",function(e){
 
-    detail.style.opacity = "0%";
-    detail.style.transition = "300ms";
-    detail.style.display = "block";
-    detail.style.opacity = "80%";
-})
+//     detail.style.opacity = "0%";
+//     detail.style.transition = "300ms";
+//     detail.style.display = "block";
+//     detail.style.opacity = "80%";
+// })
 
-function moveoutFunc(event){
-    if (event.relatedTarget != detail && event.relatedTarget != program_sample){
-        detail.style.opacity = "0%"
-        setTimeout(function(){
-            detail.style.display = "none";
-        }, 300)
-    }
-}
-detail.addEventListener("mouseout",moveoutFunc);
-program_sample.addEventListener("mouseout",moveoutFunc);
+// function moveoutFunc(event){
+//     if (event.relatedTarget != detail && event.relatedTarget != program_sample){
+//         detail.style.opacity = "0%"
+//         setTimeout(function(){
+//             detail.style.display = "none";
+//         }, 300)
+//     }
+// }
+// detail.addEventListener("mouseout",moveoutFunc);
+// program_sample.addEventListener("mouseout",moveoutFunc);
 
 
 //create函数
 buttonCreate.addEventListener("click",function(e){
+    //生成任务条
     new DraggableContainer("show_window");
-
-    // 创建新的div元素
-
-    // let newElement = document.createElement('div');
-
-    // // 设置元素的属性和样式
-    // newElement.id = 'program';
-    // newElement.style.transition = '300ms';
-    // newElement.style.position = 'absolute';
-    // newElement.style.backgroundColor = 'rgb(147, 225, 38)';
-    // newElement.style.width = '9%';
-    // newElement.style.height = '8%';
-    // newElement.style.margin = '8px';
-    // newElement.style.borderRadius = '10px';
-
-    // 将新元素添加到指定的父元素中
 })
 
-//设立封装监听函数
+//设立封装监听函数（本体函数）技术探索阶段的第一版函数，2024/10/31 目前所有的可拖拽函数都是以本函数所作出的改进
 function addDraggable(element){
     element.addEventListener("mousedown",function(event){
         
@@ -438,7 +562,6 @@ function addDraggable(element){
         },{once: true});
     });
 }
-
 
 </script>
 </html>
