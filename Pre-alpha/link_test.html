@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>刷新率更高/更丝滑的版本</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Line Example</title>
+    <style>
+        .element {
+            width: 50px;
+            height: 50px;
+            background-color: lightblue;
+            position: absolute;
+            cursor: pointer;
+        }
+        .line {
+            position: absolute;
+            background-color: black;
+            height: 2px;
+        }
+        .line{
+            background-color: rgb(76, 76, 63);
+        }
+    </style>
+</head>
+<body>
+    <div id="element1" class="element" style="top: 100px; left: 100px;"></div>
+    <div id="element2" class="element" style="top: 200px; left: 200px;"></div>
+    <div id="line1" class="line"></div>
+    <div id="line2" class="line"></div>
+    <div id="line3" class="line"></div>
+
+    <script>
+        const element1 = document.getElementById('element1');
+        const element2 = document.getElementById('element2');
+        const line_1 = document.getElementById('line1');
+        const line_2 = document.getElementById('line2');
+        const line_3 = document.getElementById('line3');
+
+
+
+        function updateLine() {
+            const rect1 = element1.getBoundingClientRect();
+            const rect2 = element2.getBoundingClientRect();
+
+            const x1 = rect1.left + rect1.width ;
+            const y1 = rect1.top + rect1.height / 2;
+
+            const x2 = rect2.left ;
+            const y2 = rect2.top + rect2.height / 2;
+
+            const midX = Math.abs(x2 - x1);
+
+            line_1.style.width = `${midX / 2}px`;
+            line_1.style.left = `${x1}px`;
+            line_1.style.top = `${y1}px`;
+            line_1.style.height = '5px';
+
+            line_2.style.width = `${midX / 2}px`;
+            line_2.style.left = `${x2 - midX / 2}px`;
+            line_2.style.top = `${y2}px`;
+            line_2.style.height = '5px';
+
+
+            line_3.style.height = `${Math.abs(y1 - y2)}px`;
+            if(y1 <= y2 ){
+                line_3.style.top = `${y1}px`;
+            }else{
+                line_3.style.top = `${y2}px`;
+            }
+            line_3.style.left = `${x1 + midX / 2}px`;
+            line_3.style.width = '5px';
+        }
+
+        function onDrag(element, event) {
+            const shiftX = event.clientX - element.getBoundingClientRect().left;
+            const shiftY = event.clientY - element.getBoundingClientRect().top;
+
+            function moveAt(pageX, pageY) {
+                element.style.left = `${pageX - shiftX}px`;
+                element.style.top = `${pageY - shiftY}px`;
+                updateLine();
+            }
+
+            function onMouseMove(event) {
+                moveAt(event.pageX, event.pageY);
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+
+            element.onmouseup = function() {
+                document.removeEventListener('mousemove', onMouseMove);
+                element.onmouseup = null;
+            };
+        }
+
+        element1.onmousedown = function(event) {
+            onDrag(element1, event);
+        };
+
+        element2.onmousedown = function(event) {
+            onDrag(element2, event);
+        };
+
+        element1.ondragstart = function() {
+            return false;
+        };
+
+        element2.ondragstart = function() {
+            return false;
+        };
+
+        updateLine();
+    </script>
+</body>
+</html>
