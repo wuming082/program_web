@@ -31,15 +31,21 @@ section #create{
     position: absolute;
     left: 0px;
     margin: 20px;
+    top: 60px;
 }
 
 section.option #tell{
     position: absolute;
     right: -2px;
-    top: 90px;
+    top: 100px;
     margin: 15px;
 }
-
+section.option #show{
+    position: absolute;
+    left: 2px;
+    top: 20px;
+    margin: 15px;
+}
 /*展示窗口*/
 section#show_window{
     position: absolute;
@@ -103,6 +109,30 @@ section #program_sample{
     left: 180px;
     background-color: rgb(175, 175, 165);
 }
+.line{
+    background-color: rgb(53, 167, 118);
+}
+#userInput{
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    margin: 5px;
+    border-radius: 8px;
+    height: 20px;
+    width: 200px;
+}
+#Link{
+    position: absolute;
+    left: 22px;
+    height: 20px;
+    width: 50px;
+    bottom: 45px;
+    
+}
+#tell{
+    position: absolute;
+    bottom: 20px;
+}
 </style>
 <body>
 <section id="show_window">
@@ -132,8 +162,12 @@ const program_sample = document.getElementById("program_sample");
 const detail = document.getElementById("list");
 const Link = document.getElementById('Link');
 
+
 var countProgram = 1;
 var countProgram_line = 1;
+
+//全局映射表
+let instanceMap = {};
 
 addEventListener("contextmenu",(e) =>{
     e.preventDefault();
@@ -143,10 +177,6 @@ addEventListener("contextmenu",(e) =>{
             new Menu_list("show_window",e.pageX,e.pageY,e.target.id,e.target);
         }
     }
-})
-
-Link.addEventListener('click',(e) =>{
-    new program_line("Program1","Program2");
 })
 
 //测试
@@ -169,108 +199,191 @@ document.addEventListener("mousedown",function(event){
  */
 
 //第一版aplha 2024/10/31 我觉得我不会在最终使用这一版的任务线类
-class program_line{
-    constructor(program_start,program_end){
+// class program_line{
+//     constructor(program_start,program_end){
 
-        //获取容器
-        this.continer_start = document.getElementById(program_start);
-        this.continer_end = document.getElementById(program_end);
-
-
-        //当目标元素，起始元素和终点元素，任意一个被鼠标移动，就会产生回调
-        this.transverse();
-        this.continer_start.addEventListener('mousemove',(e) =>{
-            this.updateLine();
-        })
-
-        this.continer_end.addEventListener('mousemove',(e) => {
-            this.updateLine();
-        })
+//         //获取容器
+//         this.continer_start = document.getElementById(program_start);
+//         this.continer_end = document.getElementById(program_end);
 
 
-    }
+//         //当目标元素，起始元素和终点元素，任意一个被鼠标移动，就会产生回调
+//         this.transverse();
+//         this.continer_start.addEventListener('mousemove',(e) =>{
+//             this.updateLine();
+//         })
 
-    //任务指引线的成员变量 两个横线条一个竖线条
-    transverse(){
+//         this.continer_end.addEventListener('mousemove',(e) => {
+//             this.updateLine();
+//         })
+
+
+//     }
+
+//     //任务指引线的成员变量 两个横线条一个竖线条
+//     transverse(){
         
-        var conut = countProgram_line++;
+//         var conut = countProgram_line++;
 
-        //创建元素
-        this.transverse_01 = document.createElement("div");
-        this.Vertical_01 = document.createElement("div");
-        this.transverse_02 = document.createElement("div");
+//         //创建元素
+//         this.transverse_01 = document.createElement("div");
+//         this.Vertical_01 = document.createElement("div");
+//         this.transverse_02 = document.createElement("div");
         
-        //transverse_01元素
-        this.transverse_01.style.position = 'absolute';
-        this.transverse_01.style.backgroundColor = 'black';
-        this.transverse_01.id = `line_${conut}`;
+//         //transverse_01元素
+//         this.transverse_01.style.position = 'absolute';
+//         this.transverse_01.style.backgroundColor = 'black';
+//         this.transverse_01.id = `line_${conut}`;
 
-        //transverse_02元素
-        this.transverse_02.style.position = 'absolute';
-        this.transverse_02.style.backgroundColor = 'black';
-        this.transverse_02.id = `line_${conut}`;
+//         //transverse_02元素
+//         this.transverse_02.style.position = 'absolute';
+//         this.transverse_02.style.backgroundColor = 'black';
+//         this.transverse_02.id = `line_${conut}`;
 
-        //Vertical_01元素
-        this.Vertical_01.style.position = 'absolute';
-        this.Vertical_01.style.backgroundColor = 'black';
-        this.Vertical_01.style.id = `line_${conut}`;
+//         //Vertical_01元素
+//         this.Vertical_01.style.position = 'absolute';
+//         this.Vertical_01.style.backgroundColor = 'black';
+//         this.Vertical_01.style.id = `line_${conut}`;
 
-        this.continer_start.appendChild(this.transverse_01);
-        this.transverse_01.appendChild(this.Vertical_01);
-        this.Vertical_01.appendChild(this.transverse_02);
-        this.updateLine();
-    }
+//         this.continer_start.appendChild(this.transverse_01);
+//         this.transverse_01.appendChild(this.Vertical_01);
+//         this.Vertical_01.appendChild(this.transverse_02);
+//         this.updateLine();
+//     }
 
-    //更新竖线条和横线条的长宽函数
-    updateLine(){
-        //获取start元素位置
-        const lectE1 = this.continer_start.getBoundingClientRect();
-        const lectE2 = this.continer_end.getBoundingClientRect();
+//     //更新竖线条和横线条的长宽函数
+//     updateLine(){
+//         //获取start元素位置
+//         const lectE1 = this.continer_start.getBoundingClientRect();
+//         const lectE2 = this.continer_end.getBoundingClientRect();
 
-        //获取起始点位置
-        const start_x = lectE1.left + lectE1.width;
-        const start_y = lectE1.top + lectE1.height / 2;
+//         //获取起始点位置
+//         const start_x = lectE1.left + lectE1.width;
+//         const start_y = lectE1.top + lectE1.height / 2;
 
-        //获取终点位置
-        const end_x = lectE2.left;
-        const end_y = lectE2.top + lectE2.height / 2;
+//         //获取终点位置
+//         const end_x = lectE2.left;
+//         const end_y = lectE2.top + lectE2.height / 2;
 
-        //计算中值
-        const midX = (start_x + end_x) / 2;
-        if(start_x >= end_x){
-            this.transverse_01.remove();
-            this.transverse_02.remove();
-        }
-        this.transverse_01.style.left = `${lectE1.width}px`;
-        this.transverse_01.style.top = `${lectE1.height / 2}px`;
-        this.transverse_01.style.width = `${Math.abs(midX - start_x)}px`;
-        this.transverse_01.style.height = '4px';
+//         //计算中值
+//         const midX = (start_x + end_x) / 2;
+//         if(start_x >= end_x){
+//             this.transverse_01.remove();
+//             this.transverse_02.remove();
+//         }
+//         this.transverse_01.style.left = `${lectE1.width}px`;
+//         this.transverse_01.style.top = `${lectE1.height / 2}px`;
+//         this.transverse_01.style.width = `${Math.abs(midX - start_x)}px`;
+//         this.transverse_01.style.height = '4px';
 
-        this.transverse_02.style.left = '0px';
-        if(start_y <= end_y){
-            this.transverse_02.style.top = `${Math.abs(start_y - end_y)}px`;
-            this.transverse_02.style.bottom = '0px';
-        }else{
-            this.transverse_02.style.bottom = `${-Math.abs(start_y - end_y)}px`;
-            this.transverse_02.style.top = '0px';
-        }
-        this.transverse_02.style.width = `${Math.abs(midX - end_x) + 20}px`;
-        this.transverse_02.style.height = '4px';
+//         this.transverse_02.style.left = '0px';
+//         if(start_y <= end_y){
+//             this.transverse_02.style.top = `${Math.abs(start_y - end_y)}px`;
+//             this.transverse_02.style.bottom = '0px';
+//         }else{
+//             this.transverse_02.style.bottom = `${-Math.abs(start_y - end_y)}px`;
+//             this.transverse_02.style.top = '0px';
+//         }
+//         this.transverse_02.style.width = `${Math.abs(midX - end_x) + 20}px`;
+//         this.transverse_02.style.height = '4px';
 
-        if(start_y <= end_y){
-            this.Vertical_01.style.top = '0px';
-        }else{
-            this.Vertical_01.style.top = `${-Math.abs(start_y - end_y)}px`;
-        }
-        this.Vertical_01.style.right = '0px';
-        this.Vertical_01.style.height = `${Math.abs(start_y - end_y)}px`;
-        this.Vertical_01.style.width = '5px';
-    }
+//         if(start_y <= end_y){
+//             this.Vertical_01.style.top = '0px';
+//         }else{
+//             this.Vertical_01.style.top = `${-Math.abs(start_y - end_y)}px`;
+//         }
+//         this.Vertical_01.style.right = '0px';
+//         this.Vertical_01.style.height = `${Math.abs(start_y - end_y)}px`;
+//         this.Vertical_01.style.width = '5px';
+//     }
 
     
+// }
+
+//任务线条类
+class program_line{
+    constructor(){
+
+        this.board = document.getElementById("show_window");
+        this.lect_start_tmp = document.getElementById("Program1");
+        this.lect_end_tmp = document.getElementById("Program2");
+
+        this.start1 = this.getclasselementID("Program1");
+        this.end1 = this.getclasselementID("Program2");
+        
+        this.start1.setCallback(() =>this.upsetline());
+        this.end1.setCallback(() =>this.upsetline());
+
+        
+        this.line_element();
+
+        this.board.appendChild(this.line1);
+        this.board.appendChild(this.line2);
+        this.board.appendChild(this.line3);
+
+    }
+    line_element(){
+        this.line1 = document.createElement("div");
+        this.line2 = document.createElement("div");
+        this.line3 = document.createElement("div");
+
+        this.line1.className = "line";
+        this.line2.className = "line";
+        this.line3.className = "line";
+
+        this.line1.style.position = 'absolute';
+        this.line2.style.position = 'absolute';
+        this.line3.style.position = 'absolute';
+
+        this.upsetline();
+    }
+
+    upsetline(){
+        this.lect_start = this.lect_start_tmp.getBoundingClientRect();
+        this.lect_end = this.lect_end_tmp.getBoundingClientRect();
+
+        const start_x = this.lect_start.left + this.lect_start.width;
+        const start_y = this.lect_start.top + this.lect_start.height / 2;
+
+        const end_x = this.lect_end.left;
+        const end_y = this.lect_end.top + this.lect_end.height / 2;
+
+        const mid_width = Math.abs(start_x - end_x);
+
+        console.log(mid_width);
+
+        this.line1.style.width = `${mid_width / 2}px`;
+        this.line1.style.top = `${start_y}px`;
+        this.line1.style.left = `${start_x}px`;
+        this.line1.style.height = '5px';
+
+        if(start_y <= end_y){
+            this.line2.style.top = `${start_y}px`;
+        }else{
+            this.line2.style.top = `${start_y - Math.abs(start_y - end_y) + 5}px`;
+        }
+        this.line2.style.width = '5px';
+        this.line2.style.left = `${start_x + mid_width / 2}px`;
+        this.line2.style.height = `${Math.abs(start_y - end_y)}px`;
+
+        if(start_x <= end_x){
+            this.line3.style.width = `${mid_width / 2}px`;
+            this.line3.style.left = `${end_x - mid_width / 2}px`;
+        }else{
+            this.line3.style.width = `${start_x + mid_width / 2 - end_x + 5}px`;
+            this.line3.style.left = `${end_x}px`;
+        }
+        this.line3.style.top = `${end_y}px`;
+        this.line3.style.height = '5px';
+
+        console.log("upsetlinefunction");
+    }
+
+    getclasselementID(elementid){
+        console.log("getclasselementID :",elementid);
+        return instanceMap[elementid];
+    }
 }
-
-
 
 
 //菜单类
@@ -391,6 +504,8 @@ class DraggableContainer{
 
         //元素位置 // 用于箭头指引
 
+        //添加到全局映射表当中
+        instanceMap[this.element1.id] = this;
 
         this.light_option = false;
         this.beMove = false;
@@ -399,6 +514,11 @@ class DraggableContainer{
         //this.addsection_light(this.element1);
         this.addDraggable(this.element1);
 
+    }
+
+    setCallback(onDragEndCallback){
+        this.onDragEndCallback_1 = onDragEndCallback;
+        console.log("onDragEndCallback + ",onDragEndCallback)
     }
 
     //增加拖动函数
@@ -413,7 +533,7 @@ class DraggableContainer{
                 let shiftY = event.clientY - element.getBoundingClientRect().top;
 
                 //设立回调函数
-                const moveAt = function(pageX,pageY){
+                const moveAt = (pageX,pageY) =>{
 
                     let newLeft = pageX - shiftX;
                     let newTop = pageY - shiftY;
@@ -433,6 +553,12 @@ class DraggableContainer{
 
                     element.style.left = newLeft - 10 + 'px';
                     element.style.top = newTop - 10 + 'px';
+
+                    if(this.onDragEndCallback_1){
+                        this.onDragEndCallback_1();
+                    }
+                    
+
                 }
                 const onMouseMove = (e) =>{
                     this.beMove = true;
@@ -444,9 +570,11 @@ class DraggableContainer{
 
                 //鼠标松开回调
                 document.addEventListener("mouseup",(e) =>{
-
+                    console.log("回调");
                     //开启延迟属性
-                    element.style.transition = '300ms';
+
+                    //BUG当启用自带延迟属性时，箭头线更新不及时，甚至不更新待修复
+                    //element.style.transition = '300ms';
 
                     //用于附着的成员变量
                     var doubleEle = element.getBoundingClientRect().left - borad.getBoundingClientRect().left;
@@ -461,11 +589,18 @@ class DraggableContainer{
                         var long_loc =  (Math.floor(doubleEle / board_width)) * board_width
                         if(doubleEle - long_loc > board_width / 2){
                             element.style.left = (tmp + 1) * 10  + '%';
+                            if(this.onDragEndCallback_1){
+                                console.log(element.style.left);
+                                this.onDragEndCallback_1();
+                            }
                         }else{  
                             element.style.left = tmp * 10  + '%';   
+                            if(this.onDragEndCallback_1){
+                                this.onDragEndCallback_1();
+                            }
                         }   
+                        
                     }   
-
                     //取消回调  
                     document.removeEventListener('mousemove',onMouseMove);   
 
@@ -477,6 +612,7 @@ class DraggableContainer{
     }
 }
 
+new DraggableContainer("show_window");
 new DraggableContainer("show_window");
 
 
@@ -541,7 +677,7 @@ function addDraggable(element){
 
             //用于附着的成员变量
             var doubleEle = element.getBoundingClientRect().left - borad.getBoundingClientRect().left;
-            var board_width = borad.offsetWidth / 10;
+            var board_width = board.offsetWidth / 10;
 
             //开始判断附着在哪一部分
             if(doubleEle < board_width / 2){
@@ -563,5 +699,149 @@ function addDraggable(element){
     });
 }
 
+Link.addEventListener('click',(e) =>{
+
+   new program_line();
+
+})
+
+/*
+
+//预计可行办法
+class DraggableContainer {
+    constructor(containerID, onDragEndCallback) {
+        this.continer = document.getElementById(containerID);
+        this.element_val = countProgram++;
+        this.delet = false;
+        var width = 9, height = 8;
+        this.element1 = document.createElement("div");
+        this.element1.className = "draggable-container";
+        this.element1.id = `Program${this.element_val}`; // 赋予id属性
+        this.element1.style.zIndex = "2";
+        this.element1.style.transition = "300ms";
+        this.element1.style.position = "absolute";
+        this.element1.style.backgroundColor = "rgb(147, 225, 38)";
+        this.element1.style.width = width + "%";
+        this.element1.style.height = height + "%";
+        this.element1.style.margin = "8px";
+        this.element1.style.right = "20px";
+        this.element1.style.top = "50px";
+        this.element1.style.borderRadius = "10px";
+        this.element1.dataset.element_val = this.element_val;
+        this.light_option = false;
+        this.beMove = false;
+        this.continer.appendChild(this.element1);
+
+        this.addDraggable(this.element1, onDragEndCallback);
+    }
+
+    addDraggable(element, onDragEndCallback) {
+        element.addEventListener("mousedown", (event) => {
+            if (event.button == 0) {
+                element.style.transition = "0ms";
+                let shiftX = event.clientX - element.getBoundingClientRect().left;
+                let shiftY = event.clientY - element.getBoundingClientRect().top;
+
+                const moveAt = (pageX, pageY) => {
+                    let newLeft = pageX - shiftX;
+                    let newTop = pageY - shiftY;
+                    const continer_tmp = borad.getBoundingClientRect();
+                    const element_tmp = element.getBoundingClientRect();
+                    const element_W = element_tmp.width;
+                    const element_H = element_tmp.height;
+
+                    if (newLeft < 0) newLeft = 0;
+                    if (newTop < 0) newTop = 0;
+                    if (newLeft + element_W > continer_tmp.width) newLeft = continer_tmp.width - element_W;
+                    if (newTop + element_H > continer_tmp.height) newTop = continer_tmp.height - element_H;
+
+                    element.style.left = newLeft - 10 + 'px';
+                    element.style.top = newTop - 10 + 'px';
+                }
+
+                const onMouseMove = (e) => {
+                    this.beMove = true;
+                    moveAt(e.pageX, e.pageY);
+                }
+
+                document.addEventListener("mousemove", onMouseMove);
+
+                document.addEventListener("mouseup", (e) => {
+                    element.style.transition = '300ms';
+                    var doubleEle = element.getBoundingClientRect().left - borad.getBoundingClientRect().left;
+                    var board_width = borad.offsetWidth / 10;
+
+                    if (doubleEle < board_width / 2) {
+                        element.style.left = 0 + '%';
+                    } else {
+                        var tmp = Math.floor(doubleEle / board_width);
+                        var long_loc = tmp * board_width;
+                        if (doubleEle - long_loc > board_width / 2) {
+                            element.style.left = (tmp + 1) * 10 + '%';
+                        } else {
+                            element.style.left = tmp * 10 + '%';
+                        }
+                    }
+
+                    document.removeEventListener('mousemove', onMouseMove);
+                    
+                    // 调用回调函数
+                    if (onDragEndCallback) {
+                        onDragEndCallback();
+                    }
+                }, { once: true });
+            }
+        });
+
+        element.ondragstart = () => false;
+    }
+}
+
+class ProgramLine {
+    constructor() {
+        this.board = document.getElementById("show_window");
+        this.lect_start_tmp = new DraggableContainer("show_window", () => this.updateLine());
+        this.lect_end_tmp = new DraggableContainer("show_window", () => this.updateLine());
+
+        this.line1 = document.createElement("div");
+        this.line3 = document.createElement("div");
+        this.line1.className = "line";
+        this.line3.className = "line";
+        this.line1.style.position = 'absolute';
+        this.line3.style.position = 'absolute';
+
+        this.board.appendChild(this.line1);
+        this.board.appendChild(this.line3);
+
+        this.updateLine();
+    }
+
+    updateLine() {
+        const rect1 = this.lect_start_tmp.element1.getBoundingClientRect();
+        const rect2 = this.lect_end_tmp.element1.getBoundingClientRect();
+
+        const start_x = rect1.right;
+        const start_y = rect1.top + rect1.height / 2;
+        const end_x = rect2.left;
+        const end_y = rect2.top + rect2.height / 2;
+        const midX = (start_x + end_x) / 2;
+
+        this.line1.style.width = `${midX - start_x}px`;
+        this.line1.style.left = `${start_x}px`;
+        this.line1.style.top = `${start_y}px`;
+        this.line1.style.height = '5px';
+
+        this.line3.style.width = `${end_x - midX}px`;
+        this.line3.style.left = `${midX}px`;
+        this.line3.style.top = `${end_y}px`;
+        this.line3.style.height = '5px';
+    }
+}
+
+new ProgramLine();
+
+
+*/
 </script>
 </html>
+
