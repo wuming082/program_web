@@ -271,7 +271,7 @@ class program_line{
         let stack_01 = program_line_map.get(elementID_1);
         //压栈
         stack_01.push(this.Line_data);
-        program_line_map.set(elementID_1,stackstack_01);
+        program_line_map.set(elementID_1,stack_01);
 
 
         let stack_02 = program_line_map.get(elementID_2);
@@ -686,9 +686,18 @@ function comfirm(){
         const delete_element_stack = program_line_map.get(dele_stack);
         
         //遍历栈元素
-        
+        for (let item of delete_element_stack){ 
+            deletLine(item);
+        }
+
+        dele_stack = "##empty##";
+    }else{
+        console.log("Empty stack");
     }
+
 }
+
+const interval = setInterval(comfirm, 100);
 
 /*
 
