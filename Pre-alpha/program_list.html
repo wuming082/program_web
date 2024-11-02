@@ -161,10 +161,13 @@ const buttonCreate = document.getElementById("create");
 const program_sample = document.getElementById("program_sample");
 const detail = document.getElementById("list");
 const Link = document.getElementById('Link');
-
+const userinput = document.getElementById("userInput");
 
 var countProgram = 1;
 var countProgram_line = 1;
+
+//字符串栈
+let seclcet_line = [];
 
 //全局映射表
 let instanceMap = {};
@@ -186,6 +189,29 @@ document.addEventListener("mousedown",function(event){
         mune_list.remove();
     }
 })
+
+function inputLink(event){
+    if(event.key == 'Enter'){
+        if(userinput.value == 'clear'){seclcet_line =[];userinput.value = '';}
+        else{
+
+            let programstr = userinput.value;
+            seclcet_line.push(programstr);
+            if(seclcet_line.length == 2){
+                //产生连接线
+                console.log("Create line:",seclcet_line[0]," to ",seclcet_line[1]);
+                new program_line(seclcet_line[0],seclcet_line[1]);
+
+                //清空栈
+                seclcet_line =[];
+                console.log("The seclcet_line all be clear");
+            }
+        }  
+        userinput.value = '';
+    }
+}
+
+userinput.addEventListener('keydown',inputLink);
 
 //任务进度线
 /*
@@ -302,14 +328,14 @@ document.addEventListener("mousedown",function(event){
 
 //任务线条类
 class program_line{
-    constructor(){
+    constructor(elementID_1,elementID_2){
 
         this.board = document.getElementById("show_window");
-        this.lect_start_tmp = document.getElementById("Program1");
-        this.lect_end_tmp = document.getElementById("Program2");
+        this.lect_start_tmp = document.getElementById(elementID_1);
+        this.lect_end_tmp = document.getElementById(elementID_2);
 
-        this.start1 = this.getclasselementID("Program1");
-        this.end1 = this.getclasselementID("Program2");
+        this.start1 = this.getclasselementID(elementID_1);
+        this.end1 = this.getclasselementID(elementID_2);
         
         this.start1.setCallback(() =>this.upsetline());
         this.end1.setCallback(() =>this.upsetline());
@@ -699,11 +725,7 @@ function addDraggable(element){
     });
 }
 
-Link.addEventListener('click',(e) =>{
 
-   new program_line();
-
-})
 
 /*
 
