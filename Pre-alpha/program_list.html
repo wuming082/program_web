@@ -163,14 +163,24 @@ const detail = document.getElementById("list");
 const Link = document.getElementById('Link');
 const userinput = document.getElementById("userInput");
 
+var conutLine = 1;
 var countProgram = 1;
 var countProgram_line = 1;
+
+//delet删除栈
+let dele_stack = "##empty##";
 
 //字符串栈
 let seclcet_line = [];
 
 //全局映射表
 let instanceMap = {};
+
+//line映射表
+let lineMap = {};
+
+//包含数组的键值对
+let program_line_map = new Map();
 
 addEventListener("contextmenu",(e) =>{
     e.preventDefault();
@@ -231,6 +241,9 @@ class program_line{
         this.lect_start_tmp = document.getElementById(elementID_1);
         this.lect_end_tmp = document.getElementById(elementID_2);
 
+        this.Line_data = `Line${conutLine++}`; //
+        console.log("createLine:",this.Line_data);
+
         this.start1 = this.getclasselementID(elementID_1);
         this.end1 = this.getclasselementID(elementID_2);
         
@@ -252,6 +265,20 @@ class program_line{
             this.upsetline();
         })
 
+        lineMap[this.Line_data] = this;
+
+        //将键值对引进
+        let stack_01 = program_line_map.get(elementID_1);
+        //压栈
+        stack_01.push(this.Line_data);
+        program_line_map.set(elementID_1,stackstack_01);
+
+
+        let stack_02 = program_line_map.get(elementID_2);
+        //压栈
+        stack_02.push(this.Line_data);
+        program_line_map.set(elementID_2,stack_02);
+        
     }
     line_element(){
         this.line1 = document.createElement("div");
@@ -381,7 +408,13 @@ class Menu_list{
              e.stopPropagation();
         })
         this.buttonRe.addEventListener('click',()=>{
+            
+            //删除目标元素
             element.remove();
+            //告知删除该元素
+            dele_stack = element.id;
+
+
             this.menu.remove();
         })
         this.menu.appendChild(this.buttonRe);
@@ -444,6 +477,9 @@ class DraggableContainer{
         this.continer.appendChild(this.element1);
         //this.addsection_light(this.element1);
         this.addDraggable(this.element1);
+
+        let line_stack = [];
+        program_line_map.set(this.element1.id,line_stack);
 
     }
 
@@ -626,7 +662,33 @@ function addDraggable(element){
     });
 }
 
+//删除线函数
 
+function deletLine(Line_ID){
+
+    if(lineMap[Line_ID]){
+        const lineObj = lineMap[Line_ID]
+        if(lineObj.line1){lineObj.line1.remove();}
+        if(lineObj.line2){lineObj.line2.remove();}
+        if(lineObj.line3){lineObj.line3.remove();}
+
+        delete lineMap[Line_ID];
+        console.log("Line_ID be delete");
+    }else{
+        console.log("No find match Line_ID");
+    }
+    
+}
+
+function comfirm(){
+    if(dele_stack != "##empty##"){
+        //开始删除
+        const delete_element_stack = program_line_map.get(dele_stack);
+        
+        //遍历栈元素
+        
+    }
+}
 
 /*
 
