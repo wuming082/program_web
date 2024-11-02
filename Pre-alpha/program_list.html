@@ -318,21 +318,21 @@ class program_line{
         this.line_element();
 
         this.board.appendChild(this.line1);
-        //this.board.appendChild(this.line2);
+        this.board.appendChild(this.line2);
         this.board.appendChild(this.line3);
 
     }
     line_element(){
         this.line1 = document.createElement("div");
-        //this.line2 = document.createElement("div");
+        this.line2 = document.createElement("div");
         this.line3 = document.createElement("div");
 
         this.line1.className = "line";
-        //this.line2.style.className = "line";
+        this.line2.className = "line";
         this.line3.className = "line";
 
         this.line1.style.position = 'absolute';
-        //this.line2.style.position = 'absolute';
+        this.line2.style.position = 'absolute';
         this.line3.style.position = 'absolute';
 
         this.upsetline();
@@ -357,10 +357,25 @@ class program_line{
         this.line1.style.left = `${start_x}px`;
         this.line1.style.height = '5px';
 
-        this.line3.style.width = `${mid_width / 2}px`;
+        if(start_y <= end_y){
+            this.line2.style.top = `${start_y}px`;
+        }else{
+            this.line2.style.top = `${start_y - Math.abs(start_y - end_y) + 5}px`;
+        }
+        this.line2.style.width = '5px';
+        this.line2.style.left = `${start_x + mid_width / 2}px`;
+        this.line2.style.height = `${Math.abs(start_y - end_y)}px`;
+
+        if(start_x <= end_x){
+            this.line3.style.width = `${mid_width / 2}px`;
+            this.line3.style.left = `${end_x - mid_width / 2}px`;
+        }else{
+            this.line3.style.width = `${start_x + mid_width / 2 - end_x + 5}px`;
+            this.line3.style.left = `${end_x}px`;
+        }
         this.line3.style.top = `${end_y}px`;
-        this.line3.style.left = `${end_x - mid_width / 2}px`;
         this.line3.style.height = '5px';
+
         console.log("upsetlinefunction");
     }
 
