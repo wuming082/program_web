@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue@2.6.14"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<style>
+#width_line{
+    width: 300px;
+}
+</style>
+<body>
+    <div id="app">
+        <div id="width_line">
+        <el-progress :percentage="program" stroke-width = "30" ></el-progress>
+
+        </div>
+        <div class="block">
+          <el-slider
+            v-model="value1"
+            range
+            show-stops
+            :max="10">
+          </el-slider>
+          <el-slider v-model="value2" range show-stops :max="10"> </el-slider>
+          <el-button :plain="true" @click="open">{{value}}</el-button>
+        </div>
+        <div style="height: 300px;">
+            <el-steps  :active= "active" finish-status="success" direction="vertical" text-inside = "true">
+              <el-step title="步骤 1"></el-step>
+              <el-step title="步骤 2"></el-step>
+              <el-step title="步骤 4"></el-step>
+              <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
+            </el-steps>
+          </div>
+    </div>
+</body>
+<script>
+    let count = 0;
+    new Vue({
+      el: '#app',
+      data: function() {
+        return {
+          value1: 2,
+          value2: [2, 5],
+          value: 0,
+          active: count,
+          program: 0
+        }
+      },
+      methods: {
+      open() {
+        this.active++;
+        this.program++;
+        this.$message('这是一条消息提示');
+      },
+      openVn() {
+        const h = this.$createElement;
+        this.$message({
+          message: h('p', null, [
+            h('span', null, '内容可以是 '),
+            h('i', { style: 'color: teal' }, 'VNode')
+          ])
+        });
+      }
+    }
+    })
+</script>
+</html>
