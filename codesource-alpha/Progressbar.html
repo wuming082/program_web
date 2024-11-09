@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overlay Example</title>
+  <style>
+    .container {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      background: url('D:/program_web/program_web/codesource-vue/src/assets/logo.png') no-repeat center center;
+      background-size: cover;
+      overflow: hidden;
+    }
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(129, 129, 129, 0.5); /* 黑色，50% 透明度 */
+      pointer-events: none; /* 避免蒙版阻止点击事件 */
+    }
+    .content {
+      position: relative;
+      color: rgb(240, 240, 240);
+      text-align: center;
+      line-height: 200px; /* 使文本居中对齐 */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">被透明蒙版覆盖的元素</div>
+  </div>
+</body>
+</html>
