@@ -82,24 +82,6 @@ components：{
 }
 ```
 
-### 5.如何使用你自己编写的组件
-
-在App.vue引用并注册你的组件之后，如`sampleTest`( **注意！这是你刚刚在上一步注册时自定义的名称** )
-
-```
-//在<template>标签当中加入你写的组件
-<template>
-  <div>
-    /*
-      这个地方就是加载你的组件，你可以以标签的形式加载你的组件
-      要注意的是，在import引用时 最好使用驼峰命名法 如 sampleTest 因为Html当中不区分大小写，
-      如果使用驼峰命名法，因为sampleTest里有大写字母 T 那这样就可以以 T 为分界线在html里写成<sample-test>
-    */
-    <sample-test></sample-test>   
-  </div>
-</template>
-```
-
 以下例子为 `App.vue` 内部的代码
 
 ```
@@ -121,6 +103,24 @@ export default {
   }
 }
 </script>
+```
+
+### 5.如何使用你自己编写的组件
+
+在App.vue引用并注册你的组件之后，如`sampleTest`( **注意！这是你刚刚在上一步注册时自定义的名称** )
+
+```
+//在<template>标签当中加入你写的组件
+<template>
+  <div>
+    /*
+      这个地方就是加载你的组件，你可以以标签的形式加载你的组件
+      要注意的是，在import引用时 最好使用驼峰命名法 如 sampleTest 因为Html当中不区分大小写，
+      如果使用驼峰命名法，因为sampleTest里有大写字母 T 那这样就可以以 T 为分界线在html里写成<sample-test>
+    */
+    <sample-test></sample-test>   
+  </div>
+</template>
 ```
 
 ### 6.网页调试
