@@ -33,6 +33,31 @@ npm install
 
 并在 `/codesoure-vue/src/App.vue` 引用你在 `components` 编辑好的以`.vue`命名的组件刷新网页之后就可以生效
 
+vue的格式要求 (选项式API) 文件后缀名称.vue
+
+```
+<template>
+  //此处放置html文件
+  <div>
+    <h1>{{ value }}</h1>
+  </div>
+</template>
+
+<script>
+  //此处为你所需要放置的数据
+  export default{
+    data(){
+      return{
+        value: 'Hello World'
+      };
+    }
+  }
+</script>
+
+<style>
+  //相应的css格式
+</style>
+```
 
 ### 3.网页调试
 
