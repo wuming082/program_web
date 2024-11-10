@@ -100,7 +100,7 @@ components：{
 </template>
 ```
 
-举例
+以下例子为 `App.vue` 内部的代码
 
 ```
 <script>
