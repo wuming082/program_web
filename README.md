@@ -2,7 +2,7 @@
 
 ### 致各位项目组成员 请按照你的任务 来阅读相关指导文件
 
-[前端组件编写](/codesource-vue/README.md)
+- [前端组件编写 须知](/codesource-vue/README.md)
 
 
 ## Under construction(敬请期待)
