@@ -100,7 +100,28 @@ components：{
 </template>
 ```
 
-![1731241332119](images/README/1731241332119.png)
+举例
+
+```
+<script>
+import HelloWorld from './components/HelloWorld.vue'
+import ProgressBar from './components/ProgressBar.vue';
+import InfoMessage from './components/InfoMessage.vue';
+import ProgressLine from './components/ProgressLine.vue';
+import sampleTest from './components/sampleTest.vue';       <-------第一步就是import引用
+
+export default {
+  name: 'App',
+  components: {
+    HelloWorld,
+    ProgressBar,
+    InfoMessage,
+    ProgressLine，
+    sampleTest         <-------------------------------------------第二步就是在components里注册你引入的组件
+  }
+}
+</script>
+```
 
 ### 6.网页调试
 
