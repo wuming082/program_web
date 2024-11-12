@@ -16,8 +16,7 @@
 <style scoped>
 #sample{
     width: 300px;
-    margin: 25px;
-    position: absolute;
+    margin: 20px;
     right: -10px;
 }
 

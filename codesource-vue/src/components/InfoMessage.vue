@@ -8,6 +8,6 @@
 
 <style scoped>
 .item{
-    margin: 20px;
+    margin: 11px;
 }
 </style>

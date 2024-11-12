@@ -58,6 +58,6 @@
 <style scoped>
 .item{
     position: absolute;
-    top: 100px;
+    margin: 30px;
 }
 </style>
