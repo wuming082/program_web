@@ -66,7 +66,7 @@ npm install
 </style>
 ```
 
-### 4.如何加载你在`/components`里编写的组件
+### 4.如何注册你在`/components`里编写的组件
 
 找到`/src里的APP.vue`文件
 
