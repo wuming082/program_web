@@ -2,7 +2,7 @@
     <div id="sample">
      <el-progress
          :percentage="Linelong"
-         :stroke-width="15"
+         :stroke-width="25"
          striped
          striped-flow
          :duration="100"

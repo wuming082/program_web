@@ -2,7 +2,7 @@
     <div>
         <guided-tour id="guided" :Linelong="inlong"  :displayBool="isbeDrags" :elementLoc = "(loacguide + 1000) / paperProgressWidth * 100 " ></guided-tour>
         <div id="scroll-container" class="scroll-container">
-            <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px'}" @mousedown="startDrag">
+            <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
                 <progress-bar-main :Linelong="inlong" ></progress-bar-main>
             </div>
         </div>
@@ -20,7 +20,7 @@
     data() {
       return {
         //进度属性
-        inlong: 90,
+        inlong: 24,
 
         //设定整体的长度px
         paperProgressWidth: 10000,
@@ -61,8 +61,8 @@
         if(event.button == 0){
 
             this.isbeDrags = true;
-
             this.shiftX = event.clientX; 
+            
         // 确保 Mainloc 已经被赋值
         if (this.Mainloc) {
           // 添加 mousemove 事件监听器，并确保事件对象被传递
@@ -87,7 +87,7 @@
 
         console.log('scrollinfo', this.element.scrollLeft);
         
-        //累加错误
+        //累加位移
         this.element.scrollLeft = (shiftX - Moveat) +  this.movePlus;
 
         this.elementsrcollLocation = this.element.scrollLeft;
@@ -118,7 +118,7 @@
         this.removeDragtime(); // 每次设置新定时器之前清除旧的定时器
         this.dragTimeout = setTimeout(() => {
             this.isbeDrags = false; // 设置为 false，使元素隐藏
-        }, 1000);
+        }, 2000);
       },
       removeDragtime(){
         if(this.dragTimeout){
@@ -133,10 +133,10 @@
 <style scoped>
  
   #Maindisplay {
+    z-index: 1;
     position: absolute;
     top: 0px;
     bottom: 0px;
-    width: 10000px;
   }
 
   .scroll-container{
@@ -145,13 +145,15 @@
     right: 0px;
     bottom: 0px;
     top: 0px;
-    overflow: auto;
+    overflow: hidden;
   }
   .scollelement{
     position: absolute;
     top: 0px;
-    bottom: 0px;
+    bottom: 0px;    
     left: 0px;
+    background: radial-gradient(#c4c2c7f0 1px, transparent 2px);
+    background-size: 25px 25px;
   }
   </style>
   

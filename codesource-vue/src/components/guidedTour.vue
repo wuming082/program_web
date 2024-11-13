@@ -22,7 +22,6 @@ export default{
             //延迟变量
             transtime: 300,
 
-
         };
     },
     props:{
@@ -54,13 +53,14 @@ export default{
             }else{
                 this.transforEnDisplay();
             }
-        }
+        },
     },
 }
 </script>
 
 <style scoped>
 #background{
+    z-index: 2;
     position: absolute;
     left: 50%; /* 元素左边距父元素左边缘50% */
     transform: translateX(-50%); /* 元素向左移动自身宽度的一半 */
@@ -69,7 +69,7 @@ export default{
     height: 70px;
     background-color: rgba(169, 212, 52, 0.992);
     box-shadow: 0px 10px 20px rgba(149, 151, 151, 0.842);
-    outline: 3px solid rgba(254, 252, 223, 0.918); /* 环绕线 */
+    outline: 1px solid #31511E; /* 环绕线 */
 }
 
 #Mainprogress{
@@ -84,20 +84,20 @@ export default{
     bottom: 43px;
     left: 29px;
     right: 29px;
-    background-color: #f8ffe9;
+    background-color: #eef6de;
     border-radius: 5px;
-    outline: 3px solid rgba(255, 254, 245, 0.711); /* 环绕线 */
+    outline: 1px solid rgba(255, 254, 245, 0.711); /* 环绕线 */
 }
 #elementPoint{
     position: absolute;
     top: 0;
     bottom: 0;
 
-    width: 4%;
+    width: 30px;
     background-color: #fffdf4;
     border-radius: 5px;
     outline: 2px solid rgba(66, 66, 66, 0.711); /* 环绕线 */
-
+    transform: translate(-70%, 0%);
 }
 </style>
 
