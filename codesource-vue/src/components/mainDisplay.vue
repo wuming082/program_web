@@ -1,21 +1,29 @@
 <template>
     <div>
+
         <guided-tour id="guided" :Linelong="inlong"  :displayBool="isbeDrags" :elementLoc = "(loacguide + 1000) / paperProgressWidth * 100 " ></guided-tour>
         <div id="scroll-container" class="scroll-container">
             <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
                 <progress-bar-main :Linelong="inlong" ></progress-bar-main>
+                <progress-element-drag></progress-element-drag>
             </div>
+
         </div>
     </div>
   </template>
+
   <script>
+
+//导入组件
+  import ProgressElementDrag from './MaindisplayComponents/ProgressElementDrag.vue';
   import ProgressBarMain from './ProgressBarMain.vue';
   import guidedTour from './guidedTour.vue';
 
   export default {
     components: {
       ProgressBarMain,
-      guidedTour
+      guidedTour,
+      ProgressElementDrag
     },
     data() {
       return {

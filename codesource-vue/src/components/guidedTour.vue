@@ -69,7 +69,7 @@ export default{
     height: 70px;
     background-color: rgba(169, 212, 52, 0.992);
     box-shadow: 0px 10px 20px rgba(149, 151, 151, 0.842);
-    outline: 1px solid #31511E; /* 环绕线 */
+    outline: 1px solid #9be86e; /* 环绕线 */
 }
 
 #Mainprogress{
@@ -96,7 +96,7 @@ export default{
     width: 30px;
     background-color: #fffdf4;
     border-radius: 5px;
-    outline: 2px solid rgba(66, 66, 66, 0.711); /* 环绕线 */
+    outline: 1px solid rgba(66, 66, 66, 0.711); /* 环绕线 */
     transform: translate(-70%, 0%);
 }
 </style>
