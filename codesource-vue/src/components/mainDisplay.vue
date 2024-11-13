@@ -4,8 +4,19 @@
         <guided-tour id="guided" :Linelong="inlong"  :displayBool="isbeDrags" :elementLoc = "(loacguide + 1000) / paperProgressWidth * 100 " ></guided-tour>
         <div id="scroll-container" class="scroll-container">
             <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
+                
+                <!--测试按钮--->
+                <el-button  id="buttonCreate" type="success" @click="CreateElement">create</el-button>
+
                 <progress-bar-main :Linelong="inlong" ></progress-bar-main>
-                <progress-element-drag></progress-element-drag>
+                
+                <!--用于动态生成元素-->
+                <progress-element-drag
+                    v-for="(component, index) in components"
+                    :key="index"
+                    :index="index"
+                ></progress-element-drag>
+
             </div>
 
         </div>
@@ -43,7 +54,10 @@
         dragTimeout: null, // 存储定时器 ID
 
         //导览位置属性
-        loacguide:0
+        loacguide:0,
+
+        //控制动态生成元素
+        components:[]
       };
     },
     watch:{
@@ -64,6 +78,10 @@
 
     },
     methods: {
+      //生成按钮函数
+      CreateElement(){
+        this.components.push({});
+      },
       startDrag(event) {
         event.preventDefault();
         if(event.button == 0){
@@ -139,7 +157,13 @@
   </script>
   
 <style scoped>
- 
+  #buttonCreate{
+    position: absolute;
+    margin: 30px;
+    bottom: 0;
+    left: 0;
+  }
+
   #Maindisplay {
     z-index: 1;
     position: absolute;
