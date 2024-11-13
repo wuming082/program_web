@@ -5,7 +5,7 @@
          :stroke-width="15"
          striped
          striped-flow
-         :duration="1000"
+         :duration="100"
      />
     </div>
 </template>
