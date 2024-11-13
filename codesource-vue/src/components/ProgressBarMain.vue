@@ -34,5 +34,9 @@ export default{
 <style scoped>
 #sample{
     margin: 10px;
+    position: absolute;
+    left: 50px;
+    right: 50px;
+    top: 20px;
 }
 </style>

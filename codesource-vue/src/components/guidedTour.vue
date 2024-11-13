@@ -1,7 +1,10 @@
 <template>
     <div>
         <div id="background" :style="{ bottom: locationGuide + 'px', display: displayTrans , opacity: opacityBool + '%' , transition: transtime + 'ms'}">
-            <el-progress id="progress" text-inside="true" stroke-width="22" :color="guide" :percentage="Linelong" />
+            <div id="topgress">
+                <div id="elementPoint" :style="{left: elementLoc + '%',}"></div>
+            </div>
+            <el-progress id="Mainprogress" text-inside="true" stroke-width="22" :color="guide" :percentage="Linelong" />
         </div>
     </div>
 </template>
@@ -18,11 +21,15 @@ export default{
 
             //延迟变量
             transtime: 300,
+
+
         };
     },
     props:{
         Linelong:Number,
         displayBool:Boolean,
+        loacdisplay: Number,
+        elementLoc: Number
     },
     methods:{
         transforDisplay(){
@@ -59,17 +66,38 @@ export default{
     transform: translateX(-50%); /* 元素向左移动自身宽度的一半 */
     border-radius: 25px;
     width: 300px;
-    height: 60px;
+    height: 70px;
     background-color: rgba(169, 212, 52, 0.992);
     box-shadow: 0px 10px 20px rgba(149, 151, 151, 0.842);
     outline: 3px solid rgba(254, 252, 223, 0.918); /* 环绕线 */
 }
 
-#progress{
+#Mainprogress{
     position: absolute; /* 绝对定位 */
     bottom: 10px;
     left: 20px;
     right: 20px;
+}
+#topgress{
+    position: absolute; /* 绝对定位 */
+    height: 15px;
+    bottom: 43px;
+    left: 29px;
+    right: 29px;
+    background-color: #f8ffe9;
+    border-radius: 5px;
+    outline: 3px solid rgba(255, 254, 245, 0.711); /* 环绕线 */
+}
+#elementPoint{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: 4%;
+    background-color: #fffdf4;
+    border-radius: 5px;
+    outline: 2px solid rgba(66, 66, 66, 0.711); /* 环绕线 */
+
 }
 </style>
 
