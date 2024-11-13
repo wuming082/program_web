@@ -22,3 +22,23 @@ ProgressDrag.js //就是任务单元类的设计初版
   :index="index" 
 />
 ```
+
+其中使用动态的传输数据的操作来遍历所有的子组件
+
+在载入的时候使用 components.push({data:data})
+
+然后在创建的时候
+
+```html
+html
+<ChildComponent 
+  v-for="(component, index) in components" 
+  :key="index" 
+  :data='data'
+  :index="index" 
+/>
+```
+
+就可以在遍历初始化的时候给每一个子组件传输数据 
+
+**这一点很重要** 因为之后接入数据库后，对于每个人打开网页时都需要初始化，这时候相较于**js的类**就可以逐个赋值初始化
