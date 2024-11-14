@@ -17,18 +17,26 @@
 </template>
 
 <script>
+
+//导入组件
 import ProgressLine from './components/ProgressLine.vue';
 import mainDisplay from './components/mainDisplay.vue';
+
 export default {
   name: 'App',
   components: {
+
+    //注册组件
     mainDisplay,
     ProgressLine,
   },
   data() {
     return {
+
+      //控制左侧抽屉组件
       drawer: false,
       asideDisplayBool: false,
+
       headStyle: {
         gap: '10px', /* 子元素之间的间距 */
         display: 'flex',
