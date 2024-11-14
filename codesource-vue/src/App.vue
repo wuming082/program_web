@@ -45,7 +45,7 @@ export default {
         left: '0px',
         right: '0px',
         top: '0px',
-        height: '10%',
+        height: '67px',
         borderBottom: '0.4px solid #c8c8c8',/* 黑色的2像素描边 */
         position: 'fixed'
       },

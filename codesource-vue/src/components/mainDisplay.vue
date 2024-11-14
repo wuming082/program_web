@@ -12,6 +12,7 @@
                 
                 <!--用于动态生成元素-->
                 <progress-element-drag
+                    @toRightsrcoll= "srcollMove"
                     v-for="(component, index) in components"
                     :key="index"
                     :containerBound='container'
@@ -84,6 +85,17 @@
 
     },
     methods: {
+      //拖动条向右移动
+      srcollMove(option,extent){//extent用于控制移动的速度
+        console.log(option);
+        this.element = document.getElementById('scroll-container');
+        if(option){
+          this.element.scrollLeft += 2 * extent / 10;
+        }else{
+          this.element.scrollLeft -= 2 * extent / 10; 
+        }
+        
+      },
       updateBoundcontainer(){
         //获取容器左侧范围
         const container = document.getElementById('Maindisplay');
