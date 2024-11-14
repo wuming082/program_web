@@ -1,7 +1,8 @@
 <template>
     <div ref="element" id="element" @mousedown="startDrag">
         <div id="inside">
-            <el-progress id="progress"
+            <el-progress 
+                id="progress" 
                 :percentage="60"
                 :stroke-width="15"
                 status="warning"
@@ -15,6 +16,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
@@ -23,7 +25,14 @@ export default {
             isDragging: false,
             element: null,
             intervalId: null,
+
+            //用于控制是否显示任务
+            isShowprogress:false,
+
         };
+    },
+    components:{
+
     },
     mounted() {
         this.element = this.$refs.element;
@@ -31,11 +40,27 @@ export default {
         document.addEventListener('mousemove', this.onDrag);
 
         this.element.ondragstart = () => false;
+ 
+        this.element.addEventListener('contextmenu', this.disableRightClick);
+    },
+    beforeUnmount(){
+        this.element.removeEventListener('contextmenu', this.disableRightClick);
     },
     
     methods: {
-        movesrcollCheck(){
 
+        //禁用鼠标右键默认行为
+        disableRightClick(event){
+            event.preventDefault();
+
+            //用于传递给子组件生成的位置
+            this.createX = event.clientX;
+            this.createY = event.clientY;
+
+            this.showProgress();
+        },
+
+        movesrcollCheck(){
             //创建查找变量
             const windowWidth = window.innerWidth;
             const measurementright =  this.element.getBoundingClientRect().right;
@@ -52,24 +77,26 @@ export default {
 
         },
         startDrag(event) {
-            event.stopPropagation();
-            if (this.element) {
-                console.log('startDrag');
-                this.isDragging = true;
-                this.shiftX = event.clientX - this.element.getBoundingClientRect().left + this.containerBound;
-                this.shiftY = event.clientY - this.element.getBoundingClientRect().top;
+            if(event.button == 0){
 
+                this.isShowprogress = false;
+                event.stopPropagation();
+                if (this.element) {
 
-                console.log('shiftX, shiftY:', this.shiftX, this.shiftY);
-            } else {
-                console.error('Element not found');
-            }
-        
-            //启用轮询回调
-            this.stopcallback();
-            this.intervalId = setInterval(() => {
-                this.movesrcollCheck();
-            }, 100)
+                    this.isDragging = true;
+                    this.shiftX = event.clientX - this.element.getBoundingClientRect().left + this.containerBound;
+                    this.shiftY = event.clientY - this.element.getBoundingClientRect().top;
+
+                } else {
+                    console.error('Element not found');
+                }
+            
+                //启用轮询回调
+                this.stopcallback();
+                this.intervalId = setInterval(() => {
+                    this.movesrcollCheck();
+                }, 100)
+            }   
 
         },
         onDrag(event) {
@@ -83,10 +110,6 @@ export default {
 
                 this.element.style.left = `${movePointLeftadsorption}px`;
                 this.element.style.top = `${movePointTopadsorption}px`;
-                console.log('Dragto: left ',movePointLeft,'px',' top ',movePointTopadsorption,'px');
-
-
-                console.log('movePointLeft:', movePointLeft, 'movePointTop:', movePointTop);
 
             }
         },
@@ -94,7 +117,6 @@ export default {
             if (this.element) {
                 this.stopcallback();
                 this.isDragging = false;
-                console.log('stopDrag');
             } else {
                 console.error('Element not found');
             }
@@ -105,7 +127,6 @@ export default {
             if(this.intervalId){
                 clearInterval(this.intervalId);
                 this.intervalId = null;
-                console.log('movestopcall');
             }
         },
 
@@ -132,7 +153,11 @@ export default {
                 return (adsorptionMeasure) * 25 -  7.5;
             }
         },
-        
+
+        //菜单
+        showProgress(){
+            this.isShowprogress = !this.isShowprogress;
+        }
 
     },
     props: {
@@ -170,4 +195,5 @@ export default {
     left: 10px;
     right: -20px;
 }
+
 </style>
