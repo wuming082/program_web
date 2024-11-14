@@ -1,5 +1,17 @@
 <template>
-    <div ref="element" id="element" @mousedown="startDrag"></div>
+    <div ref="element" id="element" @mousedown="startDrag">
+        <div id="inside">
+            <el-progress id="progress"
+                :percentage="60"
+                :stroke-width="15"
+                status="warning"
+                striped
+                striped-flow
+                :duration="2"
+            />
+            <!-- <button id="insidebutton"></button> -->
+        </div>
+    </div>
 </template>
 
 <script>
@@ -136,12 +148,26 @@ export default {
 
 <style scoped>
 #element {
-    width: 100px;
-    height: 40px; 
+    width: 130px;
+    height: 60px; 
     /* 20中心距离 */
-    background-color: #E6FF94;
-    outline: 2px solid #40A578;
-    border-radius: 10px;
+    background-color: #FFA000;
+    /* outline: 2px solid #40A578; */
+    border-radius: 2px;
     position: absolute;
+}
+#inside{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 12px;
+    background-color: #FFC107;
+}
+#progress{
+    position: absolute;
+    bottom: 12px;
+    left: 10px;
+    right: -20px;
 }
 </style>

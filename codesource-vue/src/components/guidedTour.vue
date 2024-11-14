@@ -64,7 +64,7 @@ export default{
     position: absolute;
     left: 50%; /* 元素左边距父元素左边缘50% */
     transform: translateX(-50%); /* 元素向左移动自身宽度的一半 */
-    border-radius: 25px;
+    border-radius: 10px;
     width: 300px;
     height: 70px;
     background-color: rgba(169, 212, 52, 0.992);
