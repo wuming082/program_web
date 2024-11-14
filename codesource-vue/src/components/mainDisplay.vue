@@ -14,6 +14,7 @@
                 <progress-element-drag
                     v-for="(component, index) in components"
                     :key="index"
+                    :containerBound='container'
                     :index="index"
                 ></progress-element-drag>
 
@@ -57,7 +58,10 @@
         loacguide:0,
 
         //控制动态生成元素
-        components:[]
+        components:[],
+
+        //container控制范围
+        container: 0,
       };
     },
     watch:{
@@ -76,11 +80,20 @@
       this.plusMore = content/this.paperProgressWidth * content + 60;
       console.log('content',this.plusMore);
 
+      this.Mainloc.addEventListener('mousemove',this.updateBoundcontainer);
+
     },
     methods: {
+      updateBoundcontainer(){
+        //获取容器左侧范围
+        const container = document.getElementById('Maindisplay');
+        this.container = container.getBoundingClientRect().left;
+      },
       //生成按钮函数
       CreateElement(){
-        this.components.push({});
+        this.components.push(
+          this.container
+        );
       },
       startDrag(event) {
         event.preventDefault();
@@ -151,7 +164,8 @@
             clearTimeout(this.dragTimeout); // 清除定时器
             this.dragTimeout = null;
         }
-      }
+      },
+      
     }
   };
   </script>
