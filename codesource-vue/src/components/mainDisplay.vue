@@ -210,8 +210,12 @@
     top: 0px;
     bottom: 0px;    
     left: 0px;
-    background: radial-gradient(#c4c2c7f0 1px, transparent 2px);
-    background-size: 25px 25px;
+    background-color: rgb(247, 247, 247);
+     /* 设置背景颜色为灰色 */ 
+    background-image: radial-gradient(#c4c2c7f0 1px, transparent 2px);
+    /* 创建点的效果 */ 
+    background-size: 25px 25px; 
+    /* 设置点的间距 */
   }
   </style>
   

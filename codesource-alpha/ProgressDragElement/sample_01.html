@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="show">
+        <div ref="element" id="element" @mousedown="startDrag">
+            <div id="insideBackgrand">
+                <div id="inside1"></div>
+                <div id="inside2"></div>
+                <div id="inside3"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<style>
+    #show{
+        display: flex;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        align-items: center; /* 垂直居中 */
+        justify-content: center;
+    }
+    #element {
+    width: 150px;
+    height: 100px; 
+    /* 20中心距离 */
+    background-color: #f3f3f3;
+    outline: 1px solid #777777;
+    /* outline: 2px solid #40A578; */
+    border-radius: 5px;
+    position: absolute;
+    }
+    #insideBackgrand{
+        width: 70px;
+        height: 24px;
+        background-color: #f8f8f8;
+        outline: 1px solid #a4a4a4;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        border-radius: 4px;
+        display: flex;
+        gap: 0px;
+    }
+    #inside1{
+
+        width: 16px;
+        height: 16px;
+        margin: 4px;
+        border-radius: 5px;
+        background-color: rgb(79, 186, 85);
+        outline: 1px solid rgb(62, 141, 66);
+    }
+    #inside2{
+
+        width: 16px;
+        height: 16px;
+        margin: 4px;
+        border-radius: 5px;
+        background-color: rgb(165, 237, 169);
+        outline: 1px solid rgb(140, 190, 143);
+    }
+    #inside3{
+
+        width: 16px;
+        height: 16px;
+        margin: 4px;
+        border-radius: 5px;
+        background-color: rgb(216, 216, 216);
+        outline: 1px solid rgb(192, 192, 192);
+    }
+</style>
+</html>

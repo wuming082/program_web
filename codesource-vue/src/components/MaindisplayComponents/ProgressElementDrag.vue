@@ -1,16 +1,8 @@
 <template>
     <div ref="element" id="element" @mousedown="startDrag">
-        <div id="inside">
-            <el-progress 
-                id="progress" 
-                :percentage="60"
-                :stroke-width="15"
-                status="warning"
-                striped
-                striped-flow
-                :duration="2"
-            />
-            <!-- <button id="insidebutton"></button> -->
+        <h1 id="text">progress</h1>
+        <div id="insideBackgrand">
+            
         </div>
     </div>
 </template>
@@ -173,27 +165,33 @@ export default {
 
 <style scoped>
 #element {
-    width: 130px;
-    height: 60px; 
+    width: 150px;
+    height: 100px; 
     /* 20中心距离 */
-    background-color: #FFA000;
+    background-color: #f3f3f3;
+    outline: 1px solid #777777;
     /* outline: 2px solid #40A578; */
-    border-radius: 2px;
+    border-radius: 5px;
+    
     position: absolute;
 }
-#inside{
+#text{
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 12px;
-    background-color: #FFC107;
-}
-#progress{
-    position: absolute;
-    bottom: 12px;
+    top: -15px;
     left: 10px;
-    right: -20px;
-}
+    color: #5a6970;
 
+}
+#insideBackgrand{
+    width: 135px;
+    height: 55px;
+    background-color: #f8f8f8;
+    outline: 1px solid #a4a4a4;
+    position: absolute;
+    bottom: 7.5px;
+    right: 7.5px;
+    border-radius: 4px;
+    display: flex;
+    box-shadow: 0px 1px 1px rgba(217, 220, 220, 0.842);
+}
 </style>
