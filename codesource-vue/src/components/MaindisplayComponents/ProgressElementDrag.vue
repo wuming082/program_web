@@ -1,7 +1,17 @@
 <template>
-    <div ref="element" id="element" @mousedown="startDrag">
-        <h1 id="text">progress</h1>
-        <div id="insideBackgrand">
+    <div ref="element" id="element" >
+        <div id="Dragelement" @mousedown="startDrag"></div>
+        <h1 id="text" v-if="!displayinput" @click="textinputClick">{{progressneme}}</h1>
+
+        <input v-if="displayinput"
+            ref="inputref" id="inputborad"
+            @keyup="Headerskeyup" 
+            @click="inputfocus"
+            v-model="progressinput" 
+            placeholder= 'please input name'
+        >
+
+        <div id="insideBackgrand" >
             
         </div>
     </div>
@@ -21,6 +31,12 @@ export default {
             //用于控制是否显示任务
             isShowprogress:false,
 
+            //用于接收输入框的文字信息
+            progressinput: '',
+            progressneme: 'Progress name',
+            //用于是否显示输入框
+            displayinput: false,
+
         };
     },
     components:{
@@ -38,8 +54,20 @@ export default {
     beforeUnmount(){
         this.element.removeEventListener('contextmenu', this.disableRightClick);
     },
+
     
     methods: {
+        //点击字体标题事件
+        textinputClick(){
+            this.displayinput = !this.displayinput;
+        },
+        Headerskeyup(event){
+            if(event.key == 'Enter'){
+                this.progressneme = this.progressinput;
+                this.progressinput = '';
+                this.displayinput = false;
+            }
+        },
 
         //禁用鼠标右键默认行为
         disableRightClick(event){
@@ -149,7 +177,14 @@ export default {
         //菜单
         showProgress(){
             this.isShowprogress = !this.isShowprogress;
-        }
+        },
+
+        //显示输入状态
+        inputfocus(){
+            this.$nextTick(()=>{
+                    this.$refs.inputref.focus();
+            });
+        },
 
     },
     props: {
@@ -158,14 +193,22 @@ export default {
     watch: {
         containerBound(newVal) {
             console.log("containerBoundVal -> ", newVal);
+        },
+        displayinput(newVal){
+            if(newVal){
+                this.$nextTick(()=>{
+                    this.$refs.inputref.focus();
+                });
+            }
         }
     }
 }
 </script>
-
+ 
 <style scoped>
 #element {
-    width: 150px;
+    
+    width: 190px;
     height: 100px; 
     /* 20中心距离 */
     background-color: #f3f3f3;
@@ -175,15 +218,44 @@ export default {
     
     position: absolute;
 }
-#text{
+#inputborad{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
+    border: 1px solid #ccc; /* 自定义边框样式 */
     position: absolute;
-    top: -15px;
+    height: 23px;
+    left: 6px;
+    right: 40px;
+    top: 5px;
+    border-radius: 5px;
+
+}
+input,
+input:focus,
+input:active,
+input:hover {
+  outline: none;
+  border: 1px solid #919191; /* 自定义边框样式 */
+  box-shadow: none;
+}
+
+#Dragelement{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 34px;
+}
+#text{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+    position: absolute;
+    top: -12px;
     left: 10px;
     color: #5a6970;
 
 }
 #insideBackgrand{
-    width: 135px;
+    width: 175px;
     height: 55px;
     background-color: #f8f8f8;
     outline: 1px solid #a4a4a4;
