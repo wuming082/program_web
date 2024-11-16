@@ -43,6 +43,7 @@ export default {
         display: 'flex',
         justifyContent: 'flex-end',
         backgroundColor: 'rgb(248, 248, 248)',
+        alignItem: 'center',
         left: '0px',
         right: '0px',
         top: '0px',
@@ -56,7 +57,7 @@ export default {
         bottom: '0px',
         right: '0px',
         left: '0px',
-        top: '10%'
+        top:'67px'
       }
     };
   },
