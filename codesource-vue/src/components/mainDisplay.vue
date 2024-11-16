@@ -13,12 +13,12 @@
                 <!--用于动态生成元素-->
                 <progress-element-drag
                     @toRightsrcoll= "srcollMove"
-                    @bring-to-front="bringToFront(index)"
                     v-for="(component, index) in components"
-                    :key="index"
+                    :key="component.id"
                     :containerBound='container'
                     :progressextent="this.progressDisplay"
                     :index="index"
+                    @deletchiropractic="deletprogress"
                 ></progress-element-drag>
 
             </div>
@@ -69,7 +69,7 @@
         //任务模块的进度颜色指示
         progressDisplay: 'scuess',
 
-        highestZIndex: 1,
+        highestZIndex: 0,
       };
     },
     watch:{
@@ -112,9 +112,9 @@
       },
       //生成按钮函数
       CreateElement(){
-        this.components.push(
-          {}
-        );
+        this.components.push({
+          id: this.highestZIndex ++
+        });
       },
       startDrag(event) {
         //event.preventDefault();
@@ -189,6 +189,15 @@
       bringToFront(index){
         this.highestZIndex += 1; 
         this.components[index].zIndex = this.highestZIndex;
+      },
+
+      deletprogress(index){
+
+        console.log("deletprogressafter",index,'components:',this.components);
+
+        this.components.splice(index,1);
+
+        console.log("deletprogressbefot",index,'components:',this.components);
       }
       
     }

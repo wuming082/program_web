@@ -1,21 +1,30 @@
 <template>
     <div ref="element" :style="{ height: elementHeight + 'px' }" id="element">
-        <div id="Dragelement" @mousedown="startDrag"></div>
+        <div id="Dragelement" @mousedown="startDrag">
+            <el-progress id="insideProgress1" color="#BDBDBD" :text-inside="true" :stroke-width="23" :percentage="70" />
+        </div>
         <h1 id="text" v-if="!displayinput" @click="textinputClick">{{progressneme}}</h1>
         <input v-if="displayinput"
+            autocomplete="off"
             ref="inputref" id="inputborad"
             @keyup="Headerskeyup" 
             @click="inputfocus"
             v-model="progressinput" 
             placeholder= 'please input name'
         >
+        <el-icon 
+            id="deletinsideelement" 
+            :size="15" 
+            @click="deletProgress"
+            ><Delete />
+        </el-icon>
         <progress-element-draginside-display
             v-for="(component, index) in components"
             :key="index"
             :heightLoc= "component.top"
             :countlist = "index"
-            @deletelement="deletmentcount"
-        ></progress-element-draginside-display>
+        >
+        </progress-element-draginside-display>
         <div id="bottomelement">
             <div id="addbotton" @click="addbotton">
                 <el-icon id="iconP"><Plus /></el-icon>
@@ -87,13 +96,17 @@ export default {
         },
         Headerskeyup(event){
             if(event.key == 'Enter'){
-                this.progressneme = this.progressinput;
+                if(this.progressinput.length > 12){
+                    this.progressneme = this.progressinput.substring(0, 12) + '...';
+                }else{
+                    this.progressneme = this.progressinput;
+                }
                 this.progressinput = '';
                 this.displayinput = false;
             }
         },
         HeaderskeyupClick(){
-            if(this.displayinput == true){
+            if(this.displayinput == true && this.progressinput != ''){
                 this.progressneme = this.progressinput;
                 this.progressinput = '';
                 this.displayinput = false;
@@ -240,27 +253,19 @@ export default {
         },
 
         //用于删除inside单元格 待修复BUg
-        deletmentcount(countlist){
-            console.log('countlist',countlist);
-            if(countlist + 1 == this.components.length){
-                this.components.pop();
-            }else{
-                this.components.splice(countlist,1);
-                //this.components.length --;
-            }
-            let isBechange = false;
-            this.components.forEach((element) =>{
-                console.log('foreach',element);
-                if(element.countList == countlist){isBechange = true;}
+        deletProgress(){
 
-                if(isBechange){
-                    element.top -= 55;
-                }
-            })
-            console.log('this.components.length',this.components.length);
-            console.log('components:',this.components);
-            this.elementHeight -= 55;
-            this.insideelementTop -= 55;
+            
+            if(this.components.length){
+                this.elementHeight -= 55;      
+                this.insideelementTop -= 55;
+            }else{
+
+                //向组件抛出事件
+                this.$emit('deletchiropractic',this.index);
+            }
+
+            this.components.pop();
             
         }
 
@@ -270,6 +275,7 @@ export default {
         containerBound: Number,
         progressextent: String,
         zindex: Number,
+        index:Number,
     },
     watch: {
         containerBound(newVal) {
@@ -321,23 +327,13 @@ input:hover {
   border: 1px solid #919191; /* 自定义边框样式 */
   box-shadow: none;
 }
-#extend{
-    width: 15px;
-    height: 15px;
-    position: absolute;
-    border-radius: 3px;
-    right: 10px;
-    top: 13px;
-    background-color: rgb(141, 226, 66);
-    outline: 2px solid #628453;
-}
 
 #Dragelement{
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 34px;
+    bottom: 0;
 }
 #text{
     -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
@@ -364,7 +360,7 @@ input:hover {
 
     position: absolute;
     left: 5px;
-    right: 5px;
+    right: 180px;
     bottom: 5px;
     height: 25px;
     display: flex;
@@ -388,5 +384,31 @@ input:hover {
 }
 #iconP{
     margin: 4px;
+}
+#deletinsideelement{
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 12px;
+    opacity: 40%;
+}
+#extend{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 7px;
+    bottom: 7px;
+    background-color: #89e860;
+    outline: 1px solid #a4a4a4;
+
+    border-radius: 20px;
+}
+#insideProgress1{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
+    position: absolute;
+    bottom: 5px;
+    right: 8px;
+    width: 110px;
 }
 </style>
