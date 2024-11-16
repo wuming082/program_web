@@ -239,7 +239,7 @@ export default {
 
         },
 
-        //用于删除inside单元格
+        //用于删除inside单元格 待修复BUg
         deletmentcount(countlist){
             console.log('countlist',countlist);
             if(countlist + 1 == this.components.length){
@@ -252,7 +252,7 @@ export default {
             this.components.forEach((element) =>{
                 console.log('foreach',element);
                 if(element.countList == countlist){isBechange = true;}
-                    
+
                 if(isBechange){
                     element.top -= 55;
                 }
