@@ -13,9 +13,11 @@
                 <!--用于动态生成元素-->
                 <progress-element-drag
                     @toRightsrcoll= "srcollMove"
+                    @bring-to-front="bringToFront(index)"
                     v-for="(component, index) in components"
                     :key="index"
                     :containerBound='container'
+                    :progressextent="this.progressDisplay"
                     :index="index"
                 ></progress-element-drag>
 
@@ -63,6 +65,11 @@
 
         //container控制范围
         container: 0,
+
+        //任务模块的进度颜色指示
+        progressDisplay: 'scuess',
+
+        highestZIndex: 1,
       };
     },
     watch:{
@@ -82,6 +89,8 @@
       console.log('content',this.plusMore);
 
       this.Mainloc.addEventListener('mousemove',this.updateBoundcontainer);
+
+      
 
     },
     methods: {
@@ -104,7 +113,7 @@
       //生成按钮函数
       CreateElement(){
         this.components.push(
-          this.container
+          {}
         );
       },
       startDrag(event) {
@@ -177,6 +186,10 @@
             this.dragTimeout = null;
         }
       },
+      bringToFront(index){
+        this.highestZIndex += 1; 
+        this.components[index].zIndex = this.highestZIndex;
+      }
       
     }
   };
@@ -188,6 +201,7 @@
     margin: 30px;
     bottom: 0;
     left: 0;
+    z-index: 1;
   }
 
   #Maindisplay {

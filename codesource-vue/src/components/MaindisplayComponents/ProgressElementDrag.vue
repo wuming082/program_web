@@ -1,8 +1,7 @@
 <template>
-    <div ref="element" id="element" >
+    <div ref="element" :style="{ height: elementHeight + 'px' }" id="element">
         <div id="Dragelement" @mousedown="startDrag"></div>
         <h1 id="text" v-if="!displayinput" @click="textinputClick">{{progressneme}}</h1>
-
         <input v-if="displayinput"
             ref="inputref" id="inputborad"
             @keyup="Headerskeyup" 
@@ -10,14 +9,24 @@
             v-model="progressinput" 
             placeholder= 'please input name'
         >
-
-        <div id="insideBackgrand" >
-            
+        <progress-element-draginside-display
+            v-for="(component, index) in components"
+            :key="index"
+            :heightLoc= "component.top"
+            :index="index"
+        ></progress-element-draginside-display>
+        <div id="bottomelement">
+            <div id="addbotton" @click="addbotton">
+                <el-icon id="iconP"><Plus /></el-icon>
+                <div style="margin: 2px; color: #5a6970;">add</div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+
+import ProgressElementDraginsideDisplay from './ProgressElementDraginsideDisplay.vue';
 
 export default {
     data() {
@@ -37,9 +46,17 @@ export default {
             //用于是否显示输入框
             displayinput: false,
 
+            //用于控制一个单元的整体高度
+            elementHeight: 130,
+            insideelementTop: 40,
+
+            components:[{top: 40 }],
+
+            
         };
     },
     components:{
+        ProgressElementDraginsideDisplay,
 
     },
     mounted() {
@@ -50,6 +67,8 @@ export default {
         this.element.ondragstart = () => false;
  
         this.element.addEventListener('contextmenu', this.disableRightClick);
+
+
     },
     beforeUnmount(){
         this.element.removeEventListener('contextmenu', this.disableRightClick);
@@ -99,6 +118,9 @@ export default {
         startDrag(event) {
             if(event.button == 0){
 
+                
+                this.handleClick();
+
                 this.isShowprogress = false;
                 event.stopPropagation();
                 if (this.element) {
@@ -137,6 +159,7 @@ export default {
             if (this.element) {
                 this.stopcallback();
                 this.isDragging = false;
+
             } else {
                 console.error('Element not found');
             }
@@ -185,10 +208,25 @@ export default {
                     this.$refs.inputref.focus();
             });
         },
+        handleClick(){
+            this.$emit('bring-to-front'); // 自定义事件 
+        },
+
+        //添加按钮
+        addbotton(){
+            this.elementHeight += 55;
+            this.insideelementTop += 55;
+            this.components.push(
+                {top:this.insideelementTop }
+            );
+        },
+
 
     },
     props: {
         containerBound: Number,
+        progressextent: String,
+        zindex: Number,
     },
     watch: {
         containerBound(newVal) {
@@ -206,16 +244,17 @@ export default {
 </script>
  
 <style scoped>
+
 #element {
     
     width: 190px;
-    height: 100px; 
+    
     /* 20中心距离 */
     background-color: #f3f3f3;
     outline: 1px solid #777777;
     /* outline: 2px solid #40A578; */
     border-radius: 5px;
-    
+    display: flexbox;
     position: absolute;
 }
 #inputborad{
@@ -230,6 +269,7 @@ export default {
     border-radius: 5px;
 
 }
+
 input,
 input:focus,
 input:active,
@@ -237,6 +277,16 @@ input:hover {
   outline: none;
   border: 1px solid #919191; /* 自定义边框样式 */
   box-shadow: none;
+}
+#extend{
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    border-radius: 3px;
+    right: 10px;
+    top: 13px;
+    background-color: rgb(141, 226, 66);
+    outline: 2px solid #628453;
 }
 
 #Dragelement{
@@ -260,10 +310,40 @@ input:hover {
     background-color: #f8f8f8;
     outline: 1px solid #a4a4a4;
     position: absolute;
-    bottom: 7.5px;
+    top: 40px;
     right: 7.5px;
     border-radius: 4px;
     display: flex;
     box-shadow: 0px 1px 1px rgba(217, 220, 220, 0.842);
+}
+#bottomelement{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    height: 25px;
+    display: flex;
+}
+#addbotton{
+    width: 65px;
+    height: 24px;
+    margin: 1px;
+    background-color: #f3f3f3;
+
+    border-radius: 5px;
+    display: flex;
+}
+#addbotton:hover{
+    background-color: #dcdcdc;
+
+}
+#addbotton:active{
+    background-color: #b6b6b6;
+
+}
+#iconP{
+    margin: 4px;
 }
 </style>
