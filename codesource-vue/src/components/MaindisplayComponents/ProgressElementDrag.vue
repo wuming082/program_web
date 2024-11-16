@@ -13,8 +13,8 @@
             v-for="(component, index) in components"
             :key="index"
             :heightLoc= "component.top"
-            :countlist = "component.countList"
-            :index="index"
+            :countlist = "index"
+            @deletelement="deletmentcount"
         ></progress-element-draginside-display>
         <div id="bottomelement">
             <div id="addbotton" @click="addbotton">
@@ -92,6 +92,13 @@ export default {
                 this.displayinput = false;
             }
         },
+        HeaderskeyupClick(){
+            if(this.displayinput == true){
+                this.progressneme = this.progressinput;
+                this.progressinput = '';
+                this.displayinput = false;
+            }
+        },
 
         //禁用鼠标右键默认行为
         disableRightClick(event){
@@ -123,7 +130,10 @@ export default {
         startDrag(event) {
             if(event.button == 0){
 
-                
+                //当被拖动时，输入框自动完成输入事件
+                this.HeaderskeyupClick()
+
+
                 this.handleClick();
 
                 this.isShowprogress = false;
@@ -225,7 +235,34 @@ export default {
             this.components.push(
                 {top:this.insideelementTop ,countList:this.Progresscount}
             );
+            console.log('components:',this.components);
+
         },
+
+        //用于删除inside单元格
+        deletmentcount(countlist){
+            console.log('countlist',countlist);
+            if(countlist + 1 == this.components.length){
+                this.components.pop();
+            }else{
+                this.components.splice(countlist,1);
+                //this.components.length --;
+            }
+            let isBechange = false;
+            this.components.forEach((element) =>{
+                console.log('foreach',element);
+                if(element.countList == countlist){isBechange = true;}
+                    
+                if(isBechange){
+                    element.top -= 55;
+                }
+            })
+            console.log('this.components.length',this.components.length);
+            console.log('components:',this.components);
+            this.elementHeight -= 55;
+            this.insideelementTop -= 55;
+            
+        }
 
 
     },
