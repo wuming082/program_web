@@ -1,7 +1,8 @@
 <template>
-
-        <div id="insideProgress" :style="{top: heightLoc + 'px'}"></div>
-
+        <div id="insideProgress"
+         :style="{top: heightLoc + 'px'}"
+         @click="this.deletProgress"
+        ></div>
 </template>
 
 <script>
@@ -11,11 +12,30 @@ export default{
            
         };
     },
+    mounted(){
+        //document.addEventListener('contextmenu', this.disableRightClick);
+    },
+    methods:{
+        //用于向上层上传队列位置
+        deletProgress(event){
+            if(event.botton == 2){
+                console.log("be exposure");
+                this.$emit('exposurelist',this.countlist);
+            }
+                
+
+        },
+        //禁用右键
+        disableRightClick(){
+            event.preventDefault();
+        }
+    },
     components:{
 
     },
     props:{
         heightLoc:Number,
+        countlist:Number,
     },
     watch:{
         heightLoc(newVal){

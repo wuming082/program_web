@@ -117,7 +117,7 @@
         );
       },
       startDrag(event) {
-        event.preventDefault();
+        //event.preventDefault();
         if(event.button == 0){
 
             this.isbeDrags = true;

@@ -13,6 +13,7 @@
             v-for="(component, index) in components"
             :key="index"
             :heightLoc= "component.top"
+            :countlist = "component.countList"
             :index="index"
         ></progress-element-draginside-display>
         <div id="bottomelement">
@@ -48,9 +49,14 @@ export default {
 
             //用于控制一个单元的整体高度
             elementHeight: 130,
+
+            //用于控制inside单元格的位置
             insideelementTop: 40,
 
-            components:[{top: 40 }],
+            //用于设定单元格的队列位置
+            Progresscount: 0,
+
+            components:[{top: 40 ,countList: 0}],
 
             
         };
@@ -66,12 +72,11 @@ export default {
 
         this.element.ondragstart = () => false;
  
-        this.element.addEventListener('contextmenu', this.disableRightClick);
+
+        //禁用默认的右键
+        //this.element.addEventListener('contextmenu', this.disableRightClick);
 
 
-    },
-    beforeUnmount(){
-        this.element.removeEventListener('contextmenu', this.disableRightClick);
     },
 
     
@@ -90,7 +95,7 @@ export default {
 
         //禁用鼠标右键默认行为
         disableRightClick(event){
-            event.preventDefault();
+            //event.preventDefault();
 
             //用于传递给子组件生成的位置
             this.createX = event.clientX;
@@ -216,8 +221,9 @@ export default {
         addbotton(){
             this.elementHeight += 55;
             this.insideelementTop += 55;
+            this.Progresscount += 1;
             this.components.push(
-                {top:this.insideelementTop }
+                {top:this.insideelementTop ,countList:this.Progresscount}
             );
         },
 
