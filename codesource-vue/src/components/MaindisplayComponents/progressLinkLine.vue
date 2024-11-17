@@ -28,7 +28,13 @@ export default {
                     {left: 0, top: 0},
                 ];
             }
-        }
+        },
+
+        //这个就是标记的 此点附在 哪一个任务单元上
+        indexCotianer:Number,
+
+        //自身的标记
+        indexline:Number,
 
     },
     mounted(){

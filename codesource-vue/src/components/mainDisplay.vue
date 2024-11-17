@@ -6,8 +6,10 @@
                 
                 <!-- 用于动态生成连接线 -->
                 <progress-link-line
-                  v-for="(component,index) in Lineelement"
-                  :key="index"
+                  v-for="(component) in Lineelement"
+                  :key= component[2].id
+                  :point= component
+                  :indexline="component[2].id"
                 ></progress-link-line>
                 
 
@@ -26,6 +28,7 @@
                     :index="index"
                     @deletchiropractic="deletprogress"
                     @bemove="upgradeProgressloc"
+                    @wantBelink="createlinkline"
                 ></progress-element-drag>
 
 
@@ -81,6 +84,12 @@
         isbeDrags: false,
         dragTimeout: null, // 存储定时器 ID
 
+        //用于progresselementDrag计数
+        progresselementDrag_count: 0,
+
+        //用于连接线的计数
+        linkline_count: 0,
+
         //导览位置属性
         loacguide:0,
 
@@ -95,6 +104,10 @@
 
         //用于控制连接线的数组
         Lineelement:[],
+
+        //用于保存 哪一个任务单元存在 哪一个 连接线的端点
+        matchprogresstoline:{},
+
       };
     },
     watch:{
@@ -164,7 +177,7 @@
         this.components.push(
 
           //压入一个带有left 和 top值的键值对 用于实时获取相应子组件的位置
-          {left: 0,top: 0}
+          {left: 0,top: 0, id: this.progresselementDrag_count++ },  
 
         );
       },
@@ -311,8 +324,69 @@
         const indexin =  locbemove[0];
         this.components[indexin].left = locbemove[1];
         this.components[indexin].top = locbemove[2];
-        console.log('bemove: left ',locbemove[1],'top ',locbemove[2]);
+        console.log('bemove: index ',indexin, 'left ',locbemove[1],'top ',locbemove[2]);
+
+
+        //寻找目标 --> 连接线端点
+        let goalLine_id = this.matchprogresstoline[indexin];
+         
+        //先判断lineelement数组内是否有元素能够被索引
+        if(this.Lineelement.length && this.Lineelement[goalLine_id]){
+          
+          //更新连接线的 端点
+          this.Lineelement[goalLine_id][0] = {left: locbemove[1] + 200, top: locbemove[2] + 60};
+          this.Lineelement[goalLine_id][1] = {left: locbemove[1] + 200, top: locbemove[2] + 60};
+        }
+      },
+
+
+      //生成任务连接线createlinkline
+      /*
+        # 2024/11/17
+        # dreamsky
+
+        index接收的为 任务单元的index索引
+      */
+      createlinkline(index){
+
+        //设置标记形成 连接线唯一id
+        let linkline_id = 0;
+
+        //添加到映射表当中 [任务单元的index(也就是key值)”键“]  和  任务线的唯一key值”对“
+        if(!(index in this.matchprogresstoline)){                       
+
+          //对于每一个连接线设立唯一的 linkline_id 值
+          linkline_id = this.linkline_count++;
+
+          //添加到映射表当中 
+          this.matchprogresstoline[index] = linkline_id;
+        }else{
+          //如果该元素已经被 添加过键值 就直接跳过该函数
+          return;
+        }
+
+        //创建一个新的连接线 
+        /*
+          # 2024/11/17
+          # dreamsky
+
+          推入一个数组 
+          第一个数组元素保存着 第一个端点的生成的位置
+          第二个数组元素保存着 第二个端点的生成位置
+          第三个数组元素保存着 生成的该连接线 为一的id值 用做key索引（用于之后增删查改）
+
+        */ 
+        this.Lineelement.push([
+            {left: this.components[index].left + 200, top: this.components[index].top + 60},
+            {left: this.components[index].left + 200, top: this.components[index].top + 60},
+            {id: linkline_id}
+          ],
+        )
+        console.log('createlinkline this.components[index].left',this.components[index].left);
+
       }
+
+
       
     }
   };
