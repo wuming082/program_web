@@ -12,12 +12,23 @@
             v-model="progressinput" 
             placeholder= 'please input name'
         >
-        <el-icon 
+
+        <!-- 用于删除自身内部inside组件和删除自身的按钮 Test-->
+        <!-- <el-icon 
             id="deletinsideelement" 
             :size="15" 
             @click="deletProgress"
             ><Delete />
+        </el-icon> -->
+
+        <!-- 用于生成连接线的按钮 Test -->
+        <el-icon
+            id="deletinsideelement" 
+            :size="15" 
+            @click="LinkProgress"
+            ><Share />
         </el-icon>
+
         <progress-element-draginside-display
             v-for="(component, index) in components"
             :key="index"
@@ -197,8 +208,7 @@ export default {
             if(event.button == 0){
 
                 //当被拖动时，输入框自动完成输入事件
-                this.HeaderskeyupClick()
-
+                this.HeaderskeyupClick();
 
                 this.handleClick();
 
@@ -224,6 +234,10 @@ export default {
         },
         onDrag(event) {
             if (this.isDragging && this.element) {
+
+                //当被拖动时，调用函数
+                this.callbackcommitloc();
+
                 const movePointLeft = event.clientX - this.shiftX;
                 const movePointTop = event.clientY - this.shiftY  - 67;
                 
@@ -320,6 +334,30 @@ export default {
 
             this.components.pop();
             
+        },
+
+        //当点击Link按钮之后,就会向父组件传递该组件的位置以及index索引
+        LinkProgress(){ 
+
+            //向父组件传输自身索引告知父组件自己想要被link
+            this.$emit('wantBelink',this.index);
+
+        },
+
+        //当此组件被拖动时就会调用该函数
+        callbackcommitloc(){
+            /*  
+                # 2024/11/17
+                # dreamsky
+                创建一个数组 ---->
+                第一个元素 包含着 生成时此子组件的索引 
+                第二个元素 包含着 此时子组件的 left位置
+                第三个元素 包含着 此时子组件的 top位置
+            */ 
+            const locbemove = [this.index,parseInt(this.element.style.left,10),parseInt(this.element.style.top,10)];
+            
+            //向父组件传递locbemove数组
+            this.$emit('bemove',locbemove);
         }
 
 

@@ -4,6 +4,13 @@
           <div id="scroll-container" class="scroll-container">
             <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
                 
+                <!-- 用于动态生成连接线 -->
+                <progress-link-line
+                  v-for="(component,index) in Lineelement"
+                  :key="index"
+                ></progress-link-line>
+                
+
                 <!--测试按钮--->
                 <el-button  id="buttonCreate" type="success" @click="CreateElement">create</el-button>
 
@@ -18,9 +25,9 @@
                     :containerBound='container'
                     :index="index"
                     @deletchiropractic="deletprogress"
+                    @bemove="upgradeProgressloc"
                 ></progress-element-drag>
 
-                <progressLinkLine></progressLinkLine>
 
             </div>
 
@@ -85,6 +92,9 @@
 
 
         highestZIndex: 0,
+
+        //用于控制连接线的数组
+        Lineelement:[],
       };
     },
     watch:{
@@ -151,9 +161,12 @@
         在页面上 显示的 任务单元组件的个数
       */ 
       CreateElement(){
-        this.components.push({
-          id: this.highestZIndex ++
-        });
+        this.components.push(
+
+          //压入一个带有left 和 top值的键值对 用于实时获取相应子组件的位置
+          {left: 0,top: 0}
+
+        );
       },
 
       //开始拖动回调
@@ -284,6 +297,21 @@
       */
       deletprogress(index){
         this.components.splice(index,1);
+      },
+
+      /*
+        # 2024/11/17
+        # dreamsky
+        index 为子组件的索引，知道索引就可以知道 哪一个子组件被拖动了
+        left 为子组件被拖动后left的位置
+        top 为子组件被拖动后的top位置
+      */
+      //接收的是一个数组 更新各个子组件的位置 三个属性值 index left top 依次排序
+      upgradeProgressloc(locbemove){
+        const indexin =  locbemove[0];
+        this.components[indexin].left = locbemove[1];
+        this.components[indexin].top = locbemove[2];
+        console.log('bemove: left ',locbemove[1],'top ',locbemove[2]);
       }
       
     }
