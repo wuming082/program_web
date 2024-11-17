@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>绘制曲线示例</title>
+    <style>
+        /* 使用CSS设置Canvas的显示大小 */
+        canvas {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #000000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script>
+        // 设置实际分辨率
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 将Canvas实际分辨率设置为显示分辨率的两倍（或更多）
+        const scaleFactor = 2;
+        const displayWidth = 800;
+        const displayHeight = 600;
+
+        canvas.width = displayWidth * scaleFactor;
+        canvas.height = displayHeight * scaleFactor;
+
+        // 使用CSS控制显示大小
+        canvas.style.width = displayWidth + 'px';
+        canvas.style.height = displayHeight + 'px';
+
+        // 按比例缩放绘图内容
+        ctx.scale(scaleFactor, scaleFactor);
+
+        // 设置线条颜色和粗细
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 10;
+
+        // 起点
+        const startX = 100;
+        const startY = 100;
+
+        // 控制点
+        const controlX = 400;
+        const controlY = 10;
+
+        // 终点
+        const endX = 700;
+        const endY = 300;
+
+        // 开始绘制路径
+        ctx.beginPath();
+        ctx.moveTo(startX, startY); // 移动到起点
+        ctx.quadraticCurveTo(controlX, controlY, endX, endY); // 绘制二次贝塞尔曲线
+        ctx.stroke(); // 绘制路径
+    </script>
+</body>
+</html>

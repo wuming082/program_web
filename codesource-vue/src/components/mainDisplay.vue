@@ -20,6 +20,8 @@
                     @deletchiropractic="deletprogress"
                 ></progress-element-drag>
 
+                <progressLinkLine></progressLinkLine>
+
             </div>
 
         </div>
@@ -29,6 +31,9 @@
   <script>
 
 //导入组件 
+
+  //进程线组件
+  import progressLinkLine from './MaindisplayComponents/progressLinkLine.vue';
 
   //可以拖动的任务单元组件
   import ProgressElementDrag from './MaindisplayComponents/ProgressElementDrag.vue';
@@ -45,7 +50,8 @@
     components: {
       ProgressBarMain,
       guidedTour,
-      ProgressElementDrag
+      ProgressElementDrag,
+      progressLinkLine,
     },
 
     data() {
