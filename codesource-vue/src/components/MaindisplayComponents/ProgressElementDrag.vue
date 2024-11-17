@@ -36,6 +36,12 @@
 
 <script>
 
+//引用组件 
+/*  
+    # 2024/11/17
+    # dreamsky
+    每一个任务单元组件内部都可以动态创建更小的长方形元素，这个子组件就是小的长方形元素
+*/ 
 import ProgressElementDraginsideDisplay from './ProgressElementDraginsideDisplay.vue';
 
 export default {
@@ -53,6 +59,7 @@ export default {
             //用于接收输入框的文字信息
             progressinput: '',
             progressneme: 'Progress name',
+
             //用于是否显示输入框
             displayinput: false,
 
@@ -65,35 +72,76 @@ export default {
             //用于设定单元格的队列位置
             Progresscount: 0,
 
+            //用于动态创建子组件 
+            /*
+                # 2024/11/17
+                # dreamsky
+                每当任务单元被初次创建时 都需要先提前有一个 内面板
+
+                所以在初始化时就需要 先给一个  components:[{top: 40 ,countList: 0}],
+                基础元素 其中 top: 40 就是指 动态生成的子组件 到 此组件 元素内 顶部的距离
+
+                -————————————————- 父组件元素
+                            |
+                            |------------------------> 距离为40px 
+                            |
+                         = ------ = 子组件顶部
+
+                也就是说 top 就是 在子组件css属性为 position: absolute;
+                的基础上 给赋予的top值  
+                top值会在 动态创建子组件时 传递给子组件
+
+                <progress-element-draginside-display
+                    v-for="(component, index) in components"
+                    :key="index"
+                    :heightLoc= "component.top"
+                    :countlist = "index"
+                >
+                </progress-element-draginside-display>
+            */ 
             components:[{top: 40 ,countList: 0}],
 
             
         };
     },
     components:{
+
+        //注册组件
         ProgressElementDraginsideDisplay,
 
     },
     mounted() {
+
         this.element = this.$refs.element;
+
+        //添加监听行为
         document.addEventListener('mouseup', this.stopDrag);
         document.addEventListener('mousemove', this.onDrag);
 
+        //禁止元素本身默认的拖动行为
         this.element.ondragstart = () => false;
- 
-
-        //禁用默认的右键
-        //this.element.addEventListener('contextmenu', this.disableRightClick);
-
-
     },
 
     
     methods: {
+
+
         //点击字体标题事件
+        /*
+            # 2024/11/17
+            # dreamsky
+
+            这个就是面向对象的函数
+            当用于想给这个任务单元重名名时
+            点击任务单元默认的 名称 就会回调 textinputClick
+
+            输入框就会显现且等待用户输入
+        */
         textinputClick(){
             this.displayinput = !this.displayinput;
         },
+
+        //Headerskeyup(event) 和 HeaderskeyupClick() 都是 更新任务单元名称的函数
         Headerskeyup(event){
             if(event.key == 'Enter'){
                 if(this.progressinput.length > 12){
@@ -124,6 +172,9 @@ export default {
             this.showProgress();
         },
 
+
+        //当任务单元的范围超过了 浏览器视窗右边界或者左边界 ，如果左边界有边界还有内容 整体页面就会向左或
+        //者向右移动
         movesrcollCheck(){
             //创建查找变量
             const windowWidth = window.innerWidth;
@@ -140,6 +191,8 @@ export default {
             }
 
         },
+
+        //拖动函数
         startDrag(event) {
             if(event.button == 0){
 
@@ -272,9 +325,14 @@ export default {
 
     },
     props: {
+
+        //接收当前 容器（也就任务单元组件所附着的大背景板 最右侧）到 用户浏览器窗口 最右侧的距离 px
         containerBound: Number,
-        progressextent: String,
+
+        //未定义 之后有用
         zindex: Number,
+
+        //在初始化一个新的任务单元对象时 父组件向 此传递的该组件的数组索引  也就是 用于删除此组件的数组索引index 
         index:Number,
     },
     watch: {
