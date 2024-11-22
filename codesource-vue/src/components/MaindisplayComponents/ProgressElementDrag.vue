@@ -1,5 +1,5 @@
 <template>
-    <div ref="element" :style="{ height: elementHeight + 'px' }" id="element">
+    <div ref="element" :style="{ height: elementHeight + 'px' , left: elementleft + 'px' , top: elementtop + 'px'}" id="element">
         <div id="Dragelement" @mousedown="startDrag">
             <el-progress id="insideProgress1" color="#BDBDBD" :text-inside="true" :stroke-width="23" :percentage="70" />
         </div>
@@ -14,20 +14,20 @@
         >
 
         <!-- 用于删除自身内部inside组件和删除自身的按钮 Test-->
-        <!-- <el-icon 
+        <el-icon 
             id="deletinsideelement" 
             :size="15" 
             @click="deletProgress"
             ><Delete />
-        </el-icon> -->
+        </el-icon>
 
-        <!-- 用于生成连接线的按钮 Test -->
-        <el-icon
+        <!-- 用于生成连接线的按钮 Test 测试中 有BUG -->
+        <!-- <el-icon
             id="deletinsideelement" 
             :size="15" 
             @click="LinkProgress"
             ><Share />
-        </el-icon>
+        </el-icon> -->
 
         <progress-element-draginside-display
             v-for="(component, index) in components"
@@ -372,6 +372,12 @@ export default {
 
         //在初始化一个新的任务单元对象时 父组件向 此传递的该组件的数组索引  也就是 用于删除此组件的数组索引index 
         index:Number,
+
+        //接收一个left初始化值
+        elementleft:Number,
+
+        //接受一个top初始化的值
+        elementtop:Number
     },
     watch: {
         containerBound(newVal) {

@@ -4,6 +4,7 @@
       <el-header :style="headStyle">
         
         <el-button type="primary" style="margin: 20px;" @click="drawer = true">Primary</el-button>
+        
       </el-header>
       <el-container>
         <el-main :style="mainStyle">

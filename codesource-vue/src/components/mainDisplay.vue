@@ -2,7 +2,12 @@
     <div>
         <guided-tour id="guided" :Linelong="inlong"  :displayBool="isbeDrags" :elementLoc = "(loacguide + 1000) / paperProgressWidth * 100 " ></guided-tour>
           <div id="scroll-container" class="scroll-container">
+            
             <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
+                <page-ctrl
+                  @addpage="addpageweight"
+                  @Shedpage="Shedpageweight"
+                ></page-ctrl>
                 
                 <!-- 用于动态生成连接线 -->
                 <progress-link-line
@@ -12,10 +17,6 @@
                   :indexline="component[2].id"
                 ></progress-link-line>
                 
-
-                <!--测试按钮--->
-                <el-button  id="buttonCreate" type="success" @click="CreateElement">create</el-button>
-
                 <!-- 用于最顶上的进度条 -->
                 <progress-bar-main :Linelong="inlong" ></progress-bar-main>
                 
@@ -26,21 +27,33 @@
                     :key="component.id"
                     :containerBound='container'
                     :index="index"
+                    :elementleft= component.left
+                    :elementtop = component.top
                     @deletchiropractic="deletprogress"
                     @bemove="upgradeProgressloc"
                     @wantBelink="createlinkline"
                 ></progress-element-drag>
 
-
             </div>
-
+            
         </div>
+      <button-tool 
+        style="z-index: 2;" 
+        @create="CreateElement"
+        ></button-tool>
+
     </div>
   </template>
 
   <script>
 
 //导入组件 
+
+  //生成用于页面长度的工具栏
+  import pageCtrl from './MaindisplayComponents/pageCtrl.vue';
+  
+  //生成界面元素工具栏buttontool
+  import buttonTool from './MaindisplayComponents/buttonTool.vue';
 
   //进程线组件
   import progressLinkLine from './MaindisplayComponents/progressLinkLine.vue';
@@ -62,6 +75,8 @@
       guidedTour,
       ProgressElementDrag,
       progressLinkLine,
+      buttonTool,
+      pageCtrl,
     },
 
     data() {
@@ -70,7 +85,7 @@
         inlong: 24,
 
         //设定整体的长度px
-        paperProgressWidth: 10000,//单位px 用于控制页面横向长度
+        paperProgressWidth: 1400,//单位px 用于控制页面横向长度
 
         Mainloc: null, // 初始化为 null
 
@@ -107,6 +122,10 @@
 
         //用于保存 哪一个任务单元存在 哪一个 连接线的端点
         matchprogresstoline:{},
+
+        //一个保存连接两点的位置的函数 当我点击任务条连接时，如果这个栈没有保存两个位置 ，就把点击的任务单元的位置 压栈
+        //如果发现压栈完 后 保存了两个连接点位置 就动态生成连接点
+        linkstack:[],
 
       };
     },
@@ -174,10 +193,14 @@
         在页面上 显示的 任务单元组件的个数
       */ 
       CreateElement(){
+
+        const windowWidth = window.innerWidth;
+        const windowhigth = window.innerHeight;
+
         this.components.push(
 
           //压入一个带有left 和 top值的键值对 用于实时获取相应子组件的位置
-          {left: 0,top: 0, id: this.progresselementDrag_count++ },  
+          {left: -1 * this.container + windowWidth - 250 ,top: windowhigth - 350 , id: this.progresselementDrag_count++ },  
 
         );
       },
@@ -327,7 +350,7 @@
         console.log('bemove: index ',indexin, 'left ',locbemove[1],'top ',locbemove[2]);
 
 
-        //寻找目标 --> 连接线端点
+        //寻找目标 --> 连接线端点 //通过indexin获取到了连接线的索引 用 this.Lineelement控制相应的连接线
         let goalLine_id = this.matchprogresstoline[indexin];
          
         //先判断lineelement数组内是否有元素能够被索引
@@ -384,7 +407,17 @@
         )
         console.log('createlinkline this.components[index].left',this.components[index].left);
 
-      }
+      },
+
+      //增加页面长度的回调函数
+      addpageweight(){
+        this.paperProgressWidth += 500;
+      },
+
+      //减少页面长度
+      Shedpageweight(){
+        this.paperProgressWidth -= 500;
+      },
 
 
       
@@ -409,6 +442,8 @@
   }
 
   .scroll-container{
+    display: flex;
+    flex-direction: row; /* 设置主轴为水平方向 */
     position: absolute;
     left: 0px;
     right: 0px;
@@ -428,5 +463,6 @@
     background-size: 25px 25px; 
     /* 设置点的间距 */
   }
+
   </style>
   

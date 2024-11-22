@@ -4,7 +4,10 @@
             <div id="topgress">
                 <div id="elementPoint" :style="{left: elementLoc + '%',}"></div>
             </div>
-            <el-progress id="Mainprogress" text-inside="true" stroke-width="22" :color="guide" :percentage="Linelong" />
+            <el-icon size="20" style=" position: absolute; right: 30px; top: 8px; opacity: 60%;"><MapLocation /></el-icon>
+            <el-progress id="Mainprogress"  text-inside="true" stroke-width="22" color= #959595 :percentage="Linelong" />
+            <!-- <img src="../assets/PngItem_4262019.png" id="Tree" alt="tree"> -->
+
         </div>
     </div>
 </template>
@@ -60,6 +63,8 @@ export default{
 
 <style scoped>
 #background{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
     z-index: 2;
     position: absolute;
     left: 50%; /* 元素左边距父元素左边缘50% */
@@ -67,9 +72,9 @@ export default{
     border-radius: 10px;
     width: 300px;
     height: 70px;
-    background-color: rgba(169, 212, 52, 0.992);
+    background-color: #f8f8f8;
     box-shadow: 0px 10px 20px rgba(149, 151, 151, 0.842);
-    outline: 1px solid #9be86e; /* 环绕线 */
+    outline: 2px solid #b6b6b6; /* 环绕线 */
 }
 
 #Mainprogress{
@@ -83,8 +88,8 @@ export default{
     height: 15px;
     bottom: 43px;
     left: 29px;
-    right: 29px;
-    background-color: #eef6de;
+    right: 60px;
+    background-color: #bababa;
     border-radius: 5px;
     outline: 1px solid rgba(255, 254, 245, 0.711); /* 环绕线 */
 }
@@ -98,6 +103,17 @@ export default{
     border-radius: 5px;
     outline: 1px solid rgba(66, 66, 66, 0.711); /* 环绕线 */
     transform: translate(-70%, 0%);
+}
+#Tree{
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: -20px;
+    right: 10px;
+    opacity: 80%;
+    transform: matrix3d(20);
 }
 </style>
 
