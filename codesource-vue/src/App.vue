@@ -3,7 +3,7 @@
     <el-container>
       <el-header :style="headStyle">
         
-        <el-button type="primary" style="margin: 20px;" @click="drawer = true">Primary</el-button>
+        <head-display></head-display>
         
       </el-header>
       <el-container>
@@ -23,6 +23,7 @@
 //导入组件
 import ProgressLine from './components/ProgressLine.vue';
 import mainDisplay from './components/mainDisplay.vue';
+import HeadDisplay from './components/HeadDisplay.vue';
 
 export default {
   name: 'App',
@@ -31,6 +32,7 @@ export default {
     //注册组件
     mainDisplay,
     ProgressLine,
+    HeadDisplay
   },
   data() {
     return {

@@ -2,9 +2,11 @@
     <div id="tool">
         <!-- <div id="head" ></div> -->
          <!--测试按钮--->
-         <el-button  id="buttonCreate" type="success" @click="CreateElement">create
+         <el-button  id="buttonCreate" type="success" color="#7B92EE" @click="CreateElement">
+            <h3 style="color: #F5EFF5;">create</h3>
             <el-icon size="20" style="margin: 10px;"><FolderAdd /></el-icon>
          </el-button>
+        
     </div>
 </template>
 
@@ -29,7 +31,7 @@ export default{
     right: 40px;
     bottom: 40px;
     width: 190px;
-    outline: 2px solid #b0b0b0;
+    outline: 3px solid #b0b0b0;
     
     background-color: #f7f7f7;
     /* border-radius: 50%; */
@@ -44,4 +46,14 @@ export default{
     height: 20px;
     background-color: #0288D1;
 }
+#buttonCreate{
+    height: 50px;
+    width: 120px;
+    border-radius: 5px;
+    position: absolute;
+    left: 15px;
+    top: 15px;
+
+}
+
 </style>
