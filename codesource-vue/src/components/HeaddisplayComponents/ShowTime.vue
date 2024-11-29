@@ -1,3 +1,5 @@
+<!-- 时间组件 -->
+
 <template>
     <div id="time">
         <div id="now">
@@ -64,7 +66,7 @@ export default{
     height: 40px;
     font-size: 270%;
     position: absolute;
-    left: 66px;
+    left: 62px;
     top: -5px;
     color: #b1b1b1;
     font-weight: bold; /* 设置为粗体 */

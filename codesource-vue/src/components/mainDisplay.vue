@@ -67,6 +67,9 @@
   //拖动页面时自动出现的导览条
   import guidedTour from './guidedTour.vue';
 
+  //调用element-plus组件
+  import { ElNotification } from 'element-plus'
+
   export default {
     
     //注册组件
@@ -420,7 +423,21 @@
 
       //减少页面长度
       Shedpageweight(){
-        this.paperProgressWidth -= 500;
+        const windowWidth = window.innerWidth;
+        if(this.paperProgressWidth > windowWidth){
+          if(this.paperProgressWidth - windowWidth < 500){
+            this.paperProgressWidth = windowWidth;
+          }else{
+            this.paperProgressWidth -= 500;
+          }
+        }else{
+          ElNotification({
+            title: '超过阈值',
+            message: '页面已经达到最短',
+            type: 'warning',
+            // position: 'bottom-left',
+          })
+        }
       },
 
 
