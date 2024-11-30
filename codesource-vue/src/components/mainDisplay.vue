@@ -1,6 +1,12 @@
 <template>
     <div>
-        <guided-tour id="guided" :Linelong="inlong"  :displayBool="isbeDrags" :elementLoc = "(loacguide + 1000) / paperProgressWidth * 100 " ></guided-tour>
+        <guided-tour 
+          id="guided" 
+          :Linelong="inlong"  
+          :displayBool="isbeDrags" 
+          :elementLoc = "loacguide / this.paperProgressWidth" 
+          :pagemainsure = "paperProgressWidth"
+        ></guided-tour>
           <div id="scroll-container" class="scroll-container">
             
             <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
@@ -158,11 +164,8 @@
 
 
       this.plusMore = content/this.paperProgressWidth * content + 60;
-      console.log('content',this.plusMore);
-
       this.Mainloc.addEventListener('mousemove',this.updateBoundcontainer);
 
-      
 
     },
     methods: {
@@ -253,8 +256,12 @@
         this.element = document.getElementById('scroll-container');
         //累加位移
         this.element.scrollLeft = (shiftX - Moveat) +  this.movePlus;
+
         this.elementsrcollLocation = this.element.scrollLeft;
-        this.loacguide = this.elementsrcollLocation ;
+
+        const move = document.getElementById('Maindisplay');
+        this.loacguide = - move.getBoundingClientRect().left ;
+        
       },
 
       //停止回调 移除相应的监听事件 这样页面就不会跟着你的鼠标移动了

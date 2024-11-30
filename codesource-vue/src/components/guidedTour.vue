@@ -2,7 +2,7 @@
     <div>
         <div id="background" :style="{ bottom: locationGuide + 'px', display: displayTrans , opacity: opacityBool + '%' , transition: transtime + 'ms'}">
             <div id="topgress">
-                <div id="elementPoint" :style="{left: elementLoc + '%',}"></div>
+                <div id="elementPoint" :style="{left: elementLoc * 210 + 'px' , width: moveelement + 'px'}"></div>
             </div>
             <el-icon size="20" style=" position: absolute; right: 30px; top: 8px; opacity: 60%;"><MapLocation /></el-icon>
             <el-progress id="Mainprogress"  text-inside="true" stroke-width="22" color= #959595 :percentage="Linelong" />
@@ -25,13 +25,24 @@ export default{
             //延迟变量
             transtime: 300,
 
+            //整个顶部导览条的长度为210px
+
+            moveelement:0,
+
         };
     },
     props:{
         Linelong:Number,
         displayBool:Boolean,
         loacdisplay: Number,
-        elementLoc: Number
+        elementLoc: Number,
+
+        //记录整体页面的长度
+        pagemainsure: Number,
+    },
+    mounted(){
+        let windowWidth = window.innerWidth;
+        this.moveelement = windowWidth  *  210 / this.pagemainsure;
     },
     methods:{
         transforDisplay(){
@@ -50,6 +61,10 @@ export default{
         }
     },
     watch:{
+        pagemainsure(newVal){
+            let windowWidth = window.innerWidth;
+            this.moveelement = windowWidth  *  210 / newVal;
+        },
         displayBool(newVal){
             if(newVal){
                 this.transforDisplay();
@@ -69,7 +84,7 @@ export default{
     position: absolute;
     left: 50%; /* 元素左边距父元素左边缘50% */
     transform: translateX(-50%); /* 元素向左移动自身宽度的一半 */
-    border-radius: 10px;
+    border-radius: 20px;
     width: 300px;
     height: 70px;
     background-color: #f8f8f8;
@@ -88,8 +103,8 @@ export default{
     height: 15px;
     bottom: 43px;
     left: 29px;
-    right: 60px;
-    background-color: #bababa;
+    width: 210px;
+    background-color: #dcdfdf;
     border-radius: 5px;
     outline: 1px solid rgba(255, 254, 245, 0.711); /* 环绕线 */
 }
@@ -99,10 +114,10 @@ export default{
     bottom: 0;
 
     width: 30px;
-    background-color: #fffdf4;
+    background-color: #f4f4f4;
     border-radius: 5px;
     outline: 1px solid rgba(66, 66, 66, 0.711); /* 环绕线 */
-    transform: translate(-70%, 0%);
+    transform: translate(0%, 0%);
 }
 #Tree{
     width: 30px;

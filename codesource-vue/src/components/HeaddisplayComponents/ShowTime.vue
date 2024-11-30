@@ -52,6 +52,8 @@ export default{
 
 <style scoped>
 #now{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
     width: 200px;
     height: 40px;
     font-size: 270%;
@@ -62,6 +64,8 @@ export default{
     font-weight: bold; /* 设置为粗体 */
 }
 #now_move{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
     width: 200px;
     height: 40px;
     font-size: 270%;
@@ -72,6 +76,8 @@ export default{
     font-weight: bold; /* 设置为粗体 */
 }
 #yearmon{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
     width: 400px;
     height: 40px;
     font-size: 170%;
