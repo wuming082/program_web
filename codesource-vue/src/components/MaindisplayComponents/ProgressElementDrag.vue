@@ -13,13 +13,17 @@
             placeholder= 'please input name'
         >
 
+        <div ref="ctrlmessage" id="alertmessage">
+            <h4 style="position: absolute; color: azure;  left: 6px; top: -23px;">new</h4>
+        </div>
         <!-- 用于删除自身内部inside组件和删除自身的按钮 Test-->
         <el-icon 
             id="deletinsideelement" 
-            :size="15" 
+            :size="22" 
             @click="showoptionpage"
             ><Edit />
         </el-icon>
+        
         <!-- 设置按钮 -->
 
         <!-- 用于生成连接线的按钮 Test 测试中 有BUG -->
@@ -75,9 +79,9 @@
                 <el-icon size="20" style="right: 0px; top: -2px;"><Finished /></el-icon>
             </el-button>
         </div>
-        <div id="contentover" :style="{width :contentlong + 'px'}">
-            <h5 v-if="israngetime" style="color: azure; position: absolute; left: 10px; top: -13px;">{{ value1 }}</h5>
-            <h5 v-if="israngetime" style="color: azure; position: absolute; right: 10px; top: -13px;">{{ value2 }}</h5>
+        <div ref="contentoverctrl" id="contentover" :style="{width :contentlong + 'px'}">
+            <h5 v-if="israngetime" style="color: azure; position: absolute; left: 10px; top: -13px;">{{ value1_str }}</h5>
+            <h5 v-if="israngetime" style="color: azure; position: absolute; right: 10px; top: -13px;">{{ value2_str }}</h5>
         </div>
         
     </div>
@@ -93,6 +97,9 @@
     每一个任务单元组件内部都可以动态创建更小的长方形元素，这个子组件就是小的长方形元素
 */ 
 import ProgressElementDraginsideDisplay from './ProgressElementDraginsideDisplay.vue';
+
+//调用element-plus组件
+import { ElNotification , ElMessageBox } from 'element-plus'
 
 export default {
     data() {
@@ -161,10 +168,14 @@ export default {
             istruetime: true,
 
             //时间线长度
-            contentlong: 30,
+            contentlong: 35,
 
             //是否被分配时间线
             israngetime: false,
+
+            //用于展示时间的字符串
+            value1_str: '',
+            value2_str: '',
         };
     },
     components:{
@@ -431,25 +442,76 @@ export default {
 
         //验证value1/value2的合法性
         checkvalue()
-        {
-            if(this.value1 > this.value2){
-                //错误值
-                this.istruetime = true;
-            }else{
-                this.istruetime = false;
+        {   
+            if(this.value1 != 0 &&  this.value2 != 0){
+                if(this.value1 > this.value2){
+                    //错误值
+                    this.istruetime = true;
+                    ElNotification({
+                      title: '时间设定错误',
+                      message: '起始时间大于终止时间',
+                      type: 'warning',
+                      // position: 'bottom-left',
+                    })
+                }else{
+                    this.istruetime = false; 
+                }
             }
         },
 
         //生成时间线
-        createline(){
+        async createline(){
+            this.value1_str = String(this.value1).substring(0,15);
+            this.value2_str = String(this.value2).substring(0,15);
             const daytime =  (this.value2 - this.value1) / 86400000;
             //86400000为一天的时间
             //根据daytime数字来创建长度
             const daylong = 100;
-            this.israngetime = true;
-            this.contentlong = daylong * daytime;
+            if(!await this.iscansetinboard(100 * daytime)){
+                return 0;
+            }
+            this.$refs.contentoverctrl.style.display = "block";
+
+            setTimeout(() => {
+                
+                this.$refs.contentoverctrl.style.transition = 100 * daytime + 'ms';
+
+                this.israngetime = true;
+                this.contentlong = daylong * daytime;
+            }, 100);
+            
             if(this.optionpagedispaly){
                 this.showoptionpage();
+            }
+            this.$refs.ctrlmessage.style.display = 'none';
+            
+        },
+
+        //验证时间线合法性
+        async iscansetinboard(linesize){
+            const leftdistand = Number(String(this.element.style.left).substring(0,2));
+            if((leftdistand + 250 + linesize ) > this.boardwigth){
+                // alert("outboard");
+                //向上申请扩充空间 （leftdistand + 250 + linesize） - this.boardwigth
+                //询问用户是否想要申请空间
+                try {
+                    await ElMessageBox.confirm(
+                        '即将创建的时间长度大于页面宽度，是否自动适配？',
+                        '宽度警告',
+                        {
+                          confirmButtonText: 'OK',
+                          cancelButtonText: 'Cancel',
+                          type: 'warning',
+                        }
+                    );
+                    const expendNumber = (leftdistand + 250 + linesize) - this.boardwigth;
+                    this.$emit('expendboard',expendNumber);
+                    return true;
+                }   catch(err){
+                    return false;
+                }
+            }else{
+                return true;
             }
         }
 
@@ -470,7 +532,10 @@ export default {
         elementleft:Number,
 
         //接受一个top初始化的值
-        elementtop:Number
+        elementtop:Number,
+
+        //接收目前背景的宽度
+        boardwigth:Number,
     },
     watch: {
         containerBound(newVal) {
@@ -488,6 +553,10 @@ export default {
         },
         value2(){
             this.checkvalue();
+        },
+
+        boardwigth(){
+            //console.log("newval is become ->",newVal);
         }
     }
 }
@@ -639,12 +708,27 @@ input:hover {
 #contentover{
     position: absolute;
     top: 0px;
-    width: 20px;
+    width: 40px;
     left: 200px;
     height: 35px;
     background-color: rgb(143, 219, 219);
     outline: 1px solid rgb(96, 145, 145);
     border-radius: 5px;
     z-index: -2;
+    transition: 100ms;
+    display: none;
   }
+#alertmessage{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+    position: absolute;
+    width: 45px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: #fa403d;
+    left: -10px;
+    top: -10px;
+    opacity: 90%;
+
+}
+
 </style>

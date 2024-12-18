@@ -36,9 +36,11 @@
                     :index="index"
                     :elementleft= component.left
                     :elementtop = component.top
+                    :boardwigth = paperProgressWidth
                     @deletchiropractic="deletprogress"
                     @bemove="upgradeProgressloc"
                     @wantBelink="createlinkline"
+                    @expendboard="addpageweightex"
                 ></progress-element-drag>
 
             </div>
@@ -427,6 +429,10 @@
       //增加页面长度的回调函数
       addpageweight(){
         this.paperProgressWidth += 500;
+      },
+
+      addpageweightex(expendNumber){
+        this.paperProgressWidth += expendNumber;
       },
 
       //减少页面长度

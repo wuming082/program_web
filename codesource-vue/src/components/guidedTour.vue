@@ -115,7 +115,7 @@ export default{
     position: absolute;
     top: 0px;
     bottom: 0px;
-    background-color: #8c8c8c;
+    background-color: #989898;
     border-radius: 5px;
 }
 #showprogress{
