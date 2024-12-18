@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- Linelong->进度条整体的进度 -->
         <guided-tour 
           id="guided" 
           :Linelong="inlong"  

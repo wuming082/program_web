@@ -17,9 +17,10 @@
         <el-icon 
             id="deletinsideelement" 
             :size="15" 
-            @click="deletProgress"
-            ><Delete />
+            @click="showoptionpage"
+            ><Edit />
         </el-icon>
+        <!-- 设置按钮 -->
 
         <!-- 用于生成连接线的按钮 Test 测试中 有BUG -->
         <!-- <el-icon
@@ -42,7 +43,45 @@
                 <div style="margin: 2px; color: #5a6970;">add</div>
             </div>
         </div>
+        <!-- <el-date-picker
+            width="10px"
+            v-model="value"
+            type="date"
+            placeholder="Pick a Date"
+            format="YYYY/MM/DD"
+        /> -->
+        
+        <div ref="optionctrl" id="optionpage">
+            <el-date-picker
+                style="left: 10px; top: 10px;"
+                v-model="value1"
+                type="date"
+                placeholder="Pick a Date"
+                format="YYYY/MM/DD"
+            />
+            <el-date-picker
+                style="left: 10px; top: 15px;"
+                v-model="value2"
+                type="date"
+                placeholder="Pick a Date"
+                format="YYYY/MM/DD"
+            />
+            <!-- 删除按钮 -->
+            <el-button  @click="deletProgress" type="danger" plain style=" position: absolute; bottom: 0px; left: 0px; height: 35px; width: 80px; margin: 10px; border-radius: 5px;">
+                <h4>删除</h4>
+                <el-icon size="15" style="right: -3px; top: -2px;"><Delete /></el-icon>
+            </el-button>
+            <el-button  :disabled="istruetime" @click="createline" type="Primary" plain style=" position: absolute; bottom: 41px; left: 225px; height: 70px; width: 40px; margin: 10px; border-radius: 5px;">
+                <el-icon size="20" style="right: 0px; top: -2px;"><Finished /></el-icon>
+            </el-button>
+        </div>
+        <div id="contentover" :style="{width :contentlong + 'px'}">
+            <h5 v-if="israngetime" style="color: azure; position: absolute; left: 10px; top: -13px;">{{ value1 }}</h5>
+            <h5 v-if="israngetime" style="color: azure; position: absolute; right: 10px; top: -13px;">{{ value2 }}</h5>
+        </div>
+        
     </div>
+   
 </template>
 
 <script>
@@ -58,6 +97,9 @@ import ProgressElementDraginsideDisplay from './ProgressElementDraginsideDisplay
 export default {
     data() {
         return {
+            value1: 0,
+            value2: 0,
+
             shiftX: 0,
             shiftY: 0,
             isDragging: false,
@@ -112,7 +154,17 @@ export default {
             */ 
             components:[{top: 40 ,countList: 0}],
 
-            
+            //用于控制optionpage是否打开
+            optionpagedispaly: false,
+
+            //是否可以点击点击生成line按钮
+            istruetime: true,
+
+            //时间线长度
+            contentlong: 30,
+
+            //是否被分配时间线
+            israngetime: false,
         };
     },
     components:{
@@ -206,7 +258,9 @@ export default {
         //拖动函数
         startDrag(event) {
             if(event.button == 0){
-
+                if(this.optionpagedispaly){
+                    this.showoptionpage();
+                }
                 //当被拖动时，输入框自动完成输入事件
                 this.HeaderskeyupClick();
 
@@ -358,6 +412,45 @@ export default {
             
             //向父组件传递locbemove数组
             this.$emit('bemove',locbemove);
+        },
+
+        //用于打开设置页面菜单栏
+        showoptionpage(){
+            this.optionpagedispaly = !this.optionpagedispaly;
+            if(this.optionpagedispaly){
+                //显示设置页面
+                this.$refs.optionctrl.style.display = 'block';
+                this.$refs.optionctrl.style.left = 200 + 'px' ;
+            }else{
+                this.$refs.optionctrl.style.display = 'none';
+                this.$refs.optionctrl.style.left = 0 + 'px' ;
+            }
+            // console.log("data" + this.value1);
+        },
+
+
+        //验证value1/value2的合法性
+        checkvalue()
+        {
+            if(this.value1 > this.value2){
+                //错误值
+                this.istruetime = true;
+            }else{
+                this.istruetime = false;
+            }
+        },
+
+        //生成时间线
+        createline(){
+            const daytime =  (this.value2 - this.value1) / 86400000;
+            //86400000为一天的时间
+            //根据daytime数字来创建长度
+            const daylong = 100;
+            this.israngetime = true;
+            this.contentlong = daylong * daytime;
+            if(this.optionpagedispaly){
+                this.showoptionpage();
+            }
         }
 
 
@@ -389,6 +482,12 @@ export default {
                     this.$refs.inputref.focus();
                 });
             }
+        },
+        value1(){
+            this.checkvalue();
+        },
+        value2(){
+            this.checkvalue();
         }
     }
 }
@@ -489,8 +588,8 @@ input:hover {
 }
 #deletinsideelement{
     position: absolute;
-    right: 0;
-    top: 0;
+    right: -2px;
+    top: -2px;
     margin: 12px;
     opacity: 40%;
 }
@@ -513,4 +612,39 @@ input:hover {
     right: 8px;
     width: 110px;
 }
+#optionpage{
+    position: absolute;
+    top: 0px;
+    height: 130px;
+    left:0px;
+    width: 285px;
+    background-color: #f0f0f0;
+    z-index: -1;
+    /* transition: 100ms; */
+    outline: 1px solid #a4a4a4;
+    border-radius: 5px;
+    display: none;
+}
+#deleltButton{
+    background-color: #F35F5F;
+    width: 80px;
+    height: 35px;
+    position: absolute;
+    border-radius: 5px;
+    bottom: 8px;
+    left: 10px;
+    outline: 1px solid #e3e3e3;
+
+}
+#contentover{
+    position: absolute;
+    top: 0px;
+    width: 20px;
+    left: 200px;
+    height: 35px;
+    background-color: rgb(143, 219, 219);
+    outline: 1px solid rgb(96, 145, 145);
+    border-radius: 5px;
+    z-index: -2;
+  }
 </style>
