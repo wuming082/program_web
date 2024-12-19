@@ -25,7 +25,11 @@
                 ></progress-link-line>
                 
                 <!-- 顶部时间线 -->
-                 <time-line></time-line>
+                 <time-line
+                  :pagewidth="paperProgressWidth"
+                  :pagecontainerleft="container_01"
+                  :pagecontainerright="containerright"
+                 ></time-line>
 
                 <!--用于动态生成元素-->
                 <progress-element-drag
@@ -142,6 +146,10 @@
         //如果发现压栈完 后 保存了两个连接点位置 就动态生成连接点
         linkstack:[],
 
+        //用于获取右侧board到窗口的距离
+        containerright:0,
+        container_01:0,
+
       };
     },
     watch:{
@@ -158,6 +166,8 @@
       mounted()就会开始执行，来完成最后的成员变量加载
     */
     mounted() {
+      
+
       // 在组件挂载后获取 DOM 元素
       this.Mainloc = document.getElementById('Maindisplay');
       // 绑定事件处理程序的上下文
@@ -269,7 +279,10 @@
 
         const move = document.getElementById('Maindisplay');
         this.loacguide = - move.getBoundingClientRect().left ;
-        
+
+        this.container_01 = - move.getBoundingClientRect().left ;
+        this.containerright = move.getBoundingClientRect().right;
+        // console.log("containerright->",this.containerright);
       },
 
       //停止回调 移除相应的监听事件 这样页面就不会跟着你的鼠标移动了
