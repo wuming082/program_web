@@ -1,6 +1,7 @@
 <!-- 时间组件 -->
 
 <template>
+    <div id="backgrand"></div>
     <div id="time">
         <div id="now">
             XX:XX
@@ -12,6 +13,7 @@
             no define
         </div>
     </div>
+    
 </template>
 
 <script>
@@ -86,5 +88,15 @@ export default{
     top: 12px;
     color: #b1b1b1;
     font-weight: bold; /* 设置为粗体 */
+}
+#backgrand{
+    width: 310px;
+    height: 50px;
+    background-color: #eeeeee;
+    border-radius: 10px;
+    position: absolute;
+    left: 2px;
+    top: 0px;
+    outline: 2px solid #cecece;
 }
 </style>

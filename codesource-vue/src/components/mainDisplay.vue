@@ -3,7 +3,7 @@
         <!-- Linelong->进度条整体的进度 -->
         <guided-tour 
           id="guided" 
-          :Linelong="inlong"  
+          :Linelong="golbalprogresslong"  
           :displayBool="isbeDrags" 
           :elementLoc = "loacguide / this.paperProgressWidth" 
           :pagemainsure = "paperProgressWidth"
@@ -24,9 +24,9 @@
                   :indexline="component[2].id"
                 ></progress-link-line>
                 
-                <!-- 用于最顶上的进度条 -->
-                <progress-bar-main :Linelong="inlong" ></progress-bar-main>
-                
+                <!-- 顶部时间线 -->
+                 <time-line></time-line>
+
                 <!--用于动态生成元素-->
                 <progress-element-drag
                     @toRightsrcoll= "srcollMove"
@@ -70,8 +70,8 @@
   //可以拖动的任务单元组件
   import ProgressElementDrag from './MaindisplayComponents/ProgressElementDrag.vue';
 
-  //最顶上的主任务条
-  import ProgressBarMain from './ProgressBarMain.vue';
+  // //最顶上的主任务条
+  // import ProgressBarMain from './ProgressBarMain.vue';
 
   //拖动页面时自动出现的导览条
   import guidedTour from './guidedTour.vue';
@@ -79,16 +79,19 @@
   //调用element-plus组件
   import { ElNotification } from 'element-plus'
 
+  //用于时间标注的时间线
+  import timeLine from './MaindisplayComponents/timeLine.vue';
+
   export default {
     
     //注册组件
     components: {
-      ProgressBarMain,
       guidedTour,
       ProgressElementDrag,
       progressLinkLine,
       buttonTool,
       pageCtrl,
+      timeLine,
     },
 
     data() {
@@ -142,7 +145,9 @@
       };
     },
     watch:{
-
+      golbalprogresslong(newval){
+        this.inlong = newval;
+      }
     },
 
     //生命周期钩子
@@ -456,6 +461,9 @@
 
 
       
+    },
+    props:{
+      golbalprogresslong:Number,
     }
   };
   </script>

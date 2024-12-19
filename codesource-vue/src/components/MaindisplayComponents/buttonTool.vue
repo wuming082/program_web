@@ -2,9 +2,13 @@
     <div id="tool">
         <!-- <div id="head" ></div> -->
          <!--测试按钮--->
-         <el-button  id="buttonCreate" type="success" color="#7B92EE" @click="CreateElement">
-            <h3 style="color: #F5EFF5;">create</h3>
+         <el-button  id="buttonCreate" type="success" plain color="#7B92EE" @click="CreateElement">
+            <h3>create</h3>
             <el-icon size="20" style="margin: 10px;"><FolderAdd /></el-icon>
+         </el-button>
+         <el-button  id="buttonCreate_starttime" type="success" color="#125B50" plain @click="CreateElement">
+            <h3>Start</h3>
+            <!-- <el-icon size="20" style="margin: 10px;"><FolderAdd /></el-icon> -->
          </el-button>
         
     </div>
@@ -48,12 +52,19 @@ export default{
 }
 #buttonCreate{
     height: 50px;
-    width: 120px;
+    width: 100px;
     border-radius: 5px;
     position: absolute;
     left: 15px;
     top: 15px;
 
 }
-
+#buttonCreate_starttime{
+    height: 50px;
+    width: 50px;
+    border-radius: 5px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
 </style>

@@ -2,12 +2,15 @@
     <div id="Head">
         <Botton-list id="bottonlist"></Botton-list>
         <show-time></show-time>
+        <!-- 用于最顶上的进度条 -->
+        <progress-bar-main :stroke-width="80" :Linelong="inlong" style="position: absolute; right: 310px; left: 315px; top: -10px;"></progress-bar-main>
     </div>
 </template>
 
 <script>
 import BottonList from './HeaddisplayComponents/BottonList.vue';
 import ShowTime from './HeaddisplayComponents/ShowTime.vue';
+import ProgressBarMain from './ProgressBarMain.vue';
 
 export default{
 
@@ -20,6 +23,10 @@ export default{
     components:{
         BottonList,
         ShowTime,
+        ProgressBarMain,
+    },
+    props:{
+        inlong:Number
     }
 }
 </script>

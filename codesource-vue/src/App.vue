@@ -3,12 +3,16 @@
     <el-container>
       <el-header :style="headStyle">
         
-        <head-display></head-display>
+        <head-display
+        :inlong = "golballine"
+        ></head-display>
         
       </el-header>
       <el-container>
         <el-main :style="mainStyle">
-          <main-display></main-display>
+          <main-display
+            :golbalprogresslong = "golballine"
+          ></main-display>
         </el-main>
       </el-container>
     </el-container>
@@ -40,6 +44,9 @@ export default {
       //控制左侧抽屉组件
       drawer: false,
       asideDisplayBool: false,
+
+      //全局进度
+      golballine:10,
 
       headStyle: {
         gap: '10px', /* 子元素之间的间距 */

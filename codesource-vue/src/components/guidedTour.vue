@@ -2,10 +2,10 @@
     <div>
         <div id="background" :style="{ bottom: locationGuide + 'px', display: displayTrans , opacity: opacityBool + '%' , transition: transtime + 'ms'}">
             <div id="topgress">
-                <div id="showprogress" :style="{left: 24 / 100 * 180  + 'px' }">
+                <div id="showprogress" :style="{left: Linelong / 100 * 180  + 'px' }">
                     <h5>{{Linelong}}%</h5>
                 </div>
-                <div id="topgressprogress" :style="{width: 24 / 100 * 210  + 'px'}"></div>
+                <div id="topgressprogress" :style="{width: Linelong / 100 * 210  + 'px'}"></div>
                 <div id="elementPoint" :style="{left: elementLoc * 210 + 'px' , width: moveelement + 'px'}"></div>
             </div>
             <el-icon size="20" style=" position: absolute; right: 20px; top: 18px; opacity: 60%;"><MapLocation /></el-icon>

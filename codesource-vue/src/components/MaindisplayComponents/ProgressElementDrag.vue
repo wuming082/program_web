@@ -489,7 +489,8 @@ export default {
 
         //验证时间线合法性
         async iscansetinboard(linesize){
-            const leftdistand = Number(String(this.element.style.left).substring(0,2));
+            const leftdistand = Number(String(this.element.style.left).slice(0,-2));
+            // console.log("leftdistand",leftdistand);
             if((leftdistand + 250 + linesize ) > this.boardwigth){
                 // alert("outboard");
                 //向上申请扩充空间 （leftdistand + 250 + linesize） - this.boardwigth
