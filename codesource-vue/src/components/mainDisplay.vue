@@ -185,7 +185,7 @@
       const windowWidth = window.innerWidth;
       this.paperProgressWidth = windowWidth;
 
-
+      
       this.plusMore = content/this.paperProgressWidth * content + 60;
       this.Mainloc.addEventListener('mousemove',this.updateBoundcontainer);
 

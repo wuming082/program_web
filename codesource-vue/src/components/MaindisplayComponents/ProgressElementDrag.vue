@@ -1,5 +1,5 @@
 <template>
-    <div ref="element" :style="{ height: elementHeight + 'px' , left: elementleft + 'px' , top: elementtop + 'px'}" id="element">
+    <div ref="element" :style="{ height: elementHeight + 'px' }" id="element">
         <div id="Dragelement" @mousedown="startDrag">
             <el-progress id="insideProgress1" color="#BDBDBD" :text-inside="true" :stroke-width="23" :percentage="70" />
         </div>
@@ -104,8 +104,8 @@ import { ElNotification , ElMessageBox } from 'element-plus'
 export default {
     data() {
         return {
-            value1: 0,
-            value2: 0,
+            value1: null,
+            value2: null,
 
             shiftX: 0,
             shiftY: 0,
@@ -176,6 +176,9 @@ export default {
             //用于展示时间的字符串
             value1_str: '',
             value2_str: '',
+
+            //是否已知起始时间节点starttime
+            isreceptionstarttime:false,
         };
     },
     components:{
@@ -194,6 +197,10 @@ export default {
 
         //禁止元素本身默认的拖动行为
         this.element.ondragstart = () => false;
+
+        //初始化位置
+        this.element.style.left = this.elementleft  + 'px';
+        this.element.style.top = this.elementtop + 'px';
     },
 
     
@@ -441,6 +448,7 @@ export default {
 
 
         //验证value1/value2的合法性
+        //value1一定要小于 value2因为value1为任务单元的起始时间
         checkvalue()
         {   
             if(this.value1 != 0 &&  this.value2 != 0){
@@ -454,61 +462,115 @@ export default {
                       // position: 'bottom-left',
                     })
                 }else{
-                    this.istruetime = false; 
+                    this.istruetime = false;
                 }
             }
         },
 
         //生成时间线
+        //2024/12/22 
+        /*
+            dreamsky
+            异步处理函数
+            因为ElMessageBox采用异步处理函数，所以使用异步函数来搭配
+            需要用的await关键字来进行异步函数进行等待
+
+            为何要用到ElMessageBox组件
+            是因为如果任务单元的时间如果生成后超过了，maindispaly宽度的最大值
+            所以需要用ElMessageBox组件来进行警告，生成的时间线超过了最大宽度，
+            询问是否要增加maindisplay画布的宽度
+        */
         async createline(){
-            this.value1_str = String(this.value1).substring(0,15);
-            this.value2_str = String(this.value2).substring(0,15);
-            const daytime =  ((this.value2 - this.value1) / 86400000 );
+
+            //计算该任务单元的起始时间与整体任务的起始时间的时间差（天数）
+            const timeGap = (this.value1 - this.starttime) / 86400000;//求相差的天数
+
+            //先将value1和value2的字符串进行赋值，可以显示任务单元的时间线上的起始结束时间
+            this.value1_str = this.dateInit(this.value1);
+            this.value2_str = this.dateInit(this.value2);
+            
+            //计算移动到目标的地点
+            const destination =  70 + timeGap * 200;
+
+            //debug
+            // console.log("this.value1.getMonth->",this.value1.getMonth);
+
+            //计算value1和value2相差多少天
             //86400000为一天的时间
             //根据daytime数字来创建长度
-
-            //设定一天的长度
+            const daytime =  ((this.value2 - this.value1) / 86400000 );
+            
+            //设定一天的长度 //!!不容易修改，后期修复//
             const daylong = 190;
-            if(!await this.iscansetinboard(100 * daytime)){
+
+            //补足多余的长度
+            let ismove = 0;
+            if(daytime != 1){
+                ismove = 10;
+            }
+
+            //计算时间线的宽度的值
+            const measurelong = daylong * daytime + ismove * daytime;
+
+            //使用await等待iscansetinboard函数返回的结果如果
+            if(!await this.iscansetinboard(measurelong,destination)){
                 return 0;
             }
+
+            //如果时间长度为0 ，则没必要显示时间线
             if(daytime != 0){
                 this.$refs.contentoverctrl.style.display = "block";
             }
 
+            //等待100ms后开始创建时间线设定contentoverctrl元素的长度
+            //并告知israngetime改成true 说明时间线已经被分配
             setTimeout(() => {
-                
                 this.$refs.contentoverctrl.style.transition = 100 * daytime + 'ms';
-
                 this.israngetime = true;
-                this.contentlong = daylong * daytime;
+
+                //给长度赋值
+                this.contentlong = measurelong;
             }, 100);
 
-            
-
-
+            //如果菜单窗口还是开启的状态，在生成时间线后就关闭窗口
             if(this.optionpagedispaly){
                 this.showoptionpage();
             }
             this.$refs.ctrlmessage.style.display = 'none';
 
-            //计算该任务单元的起始时间与整体任务的起始时间的时间差（天数）
-            const timeGap = (this.value1 - this.starttime) / 86400000;//求相差的天数
-            console.log("timeGap->",timeGap);
-
+            //等带100ms后将任务单元移动到目标地点
             setTimeout(() => {
                 //将任务单元移动目标地点点
-                this.element.style.left = 70 + timeGap * 200 + 'px';
+                this.element.style.left = destination + 'px';
+                console.log("this.element.style.left->",this.element.style.left);
             }, 100);
             
         },
 
         //验证时间线合法性
-        async iscansetinboard(linesize){
-            const leftdistand = Number(String(this.element.style.left).slice(0,-2));
+        /*  
+            2024/12/22
+            dreamsky
+
+            接收变量 linesize（时间线的长度）destination（到达目的地后，任务单元左侧到画布左侧的距离）
+            判断 linesize + destination + 任务单元本身的长度 的宽度是否大于画布的宽度
+
+            使用异步处理函数在进行ElMessageBox组件展示时
+            用await等待反馈的结果
+            如果linesize数值超过了画布宽度最大值，就询问是否确定创建时间线
+            //并且自动增加画布宽度//
+            如果用户选择不增加画面，则iscansetinboard函数直接返回false
+
+            如果linesize的长度没有超过画布最大值，则直接返回true
+        */
+        async iscansetinboard(linesize,destination){
+
+            //计算该计算单元到画布左侧边框的距离leftdistand
+            const leftdistand = destination;
             // console.log("leftdistand",leftdistand);
+
+            //判断该任务单元生成时间线后是否长度超过画布
             if((leftdistand + 250 + linesize ) > this.boardwigth){
-                // alert("outboard");
                 //向上申请扩充空间 （leftdistand + 250 + linesize） - this.boardwigth
                 //询问用户是否想要申请空间
                 try {
@@ -521,16 +583,41 @@ export default {
                           type: 'warning',
                         }
                     );
+                    //如果用户选择了OK同意则程序继续进行
                     const expendNumber = (leftdistand + 250 + linesize) - this.boardwigth;
-                    this.$emit('expendboard',expendNumber);
+                    this.$emit('expendboard',expendNumber + 100);
+
+                    //告知上层函数可以生成时间线
                     return true;
+
+                    
                 }   catch(err){
+                    //如果用户选择了cancel则报错被catch捕获 并返回false
+                    //告知不能生成时间线
                     return false;
+
                 }
             }else{
+
+                //如果生成后的时间并没有超过画布则直接返回true表示可以生成时间线
                 return true;
             }
-        }
+        },
+
+        //格式化日期函数
+        /*
+            2024/12/22
+            dreamsky
+            格式化时间函数传入一个date时间对象
+            分别转换成day，Monthdata ，Year
+            然后合并返回字符串 YYYY/MM/DD
+        */
+        dateInit(timedate){
+            let day = timedate.getDate();
+            let Monthdata = ( timedate.getMonth() + 1);
+            let Year = timedate.getFullYear().toString();
+            return `${Year}/${Monthdata}/${day}`;
+        },
 
 
     },
@@ -574,13 +661,10 @@ export default {
         value2(){
             this.checkvalue();
         },
-
+        //接收boardwigth最新的watch函数
         boardwigth(){
-            //console.log("newval is become ->",newVal);
+
         },
-        // starttime(newVal){
-        //     console.log("insidestarttime->",newVal);
-        // }
     }
 }
 </script>
@@ -729,10 +813,12 @@ input:hover {
 
 }
 #contentover{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
     position: absolute;
     top: 0px;
     width: 40px;
-    left: 200px;
+    left: 198px;
     height: 35px;
     background-color: rgb(143, 219, 219);
     outline: 1px solid rgb(96, 145, 145);
@@ -751,7 +837,6 @@ input:hover {
     left: -10px;
     top: -10px;
     opacity: 90%;
-
 }
 
 </style>

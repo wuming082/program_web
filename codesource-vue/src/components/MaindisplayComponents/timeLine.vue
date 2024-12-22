@@ -73,6 +73,10 @@ export default{
         //一天是200px
         //起始点的误差为60px
 
+        //持续接收时间轴的最左侧滑块与用户窗口的距离
+        //如果距离靠近到一定的距离后，左侧的时间滑块就会跟着用户窗口的左侧一起移动
+        //此条件是根据is_Definite选择是否执行的，如果起始时间没有被确定，也就是is_Definite == false
+        //则不会对用户的行为做出反应
         pagecontainerleft(newval){
             if(this.is_Definite){
                     this.count = this.dateInit(this.constdate);
@@ -90,22 +94,46 @@ export default{
                 }
             }
         },
+
+        //判断is_Definite是否变为true
         is_Definite(newVal){
             if(newVal){this.firstSetTime}
         },
     },
     methods:{
         //格式化日期函数
+        /*
+            2024/12/22
+            dreamsky
+            格式化时间函数传入一个date时间对象
+            分别转换成day，Monthdata ，Year
+            然后合并返回字符串 YYYY/MM/DD
+        */
         dateInit(timedate){
             let day = timedate.getDate();
-            let Monthdata = ( this.constdate.getMonth() + 1);
+            let Monthdata = ( timedate.getMonth() + 1);
             let Year = timedate.getFullYear().toString();
             return `${Year}/${Monthdata}/${day}`;
         },
+
         settime(){
             this.inputdispaly = true;
         },
+
+        //保存用户输入的时间，点击save后的回调函数
         savetime(){
+            if(this.progressinput == ''){
+                //做出提示
+                ElNotification({
+                  title: 'error',
+                  dangerouslyUseHTMLString: true,
+                  message: '<strong>输入设定时间不合法</strong>',
+                  type: 'error',
+                })
+                return 0;
+            }
+
+            //获取用户输入的数据提取年月日然后输入到firstSetTime当中进行起始时间初始化
             const Year =  Number(this.progressinput.substring(0,4));
             const Month =  Number(this.progressinput.substring(5,7));
             const Day =  Number(this.progressinput.substring(8,10));

@@ -55,6 +55,8 @@ export default{
 
 }
 #projectName{
+    -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
+
     position: absolute;
     top: -13px;
     left: 420px;
