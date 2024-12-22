@@ -29,10 +29,12 @@
                   :pagewidth="paperProgressWidth"
                   :pagecontainerleft="container_01"
                   :pagecontainerright="containerright"
+                  @is_define="receptionDefine"
                  ></time-line>
 
                 <!--用于动态生成元素-->
                 <progress-element-drag
+                    :starttime="starttimegolbal"
                     @toRightsrcoll= "srcollMove"
                     v-for="(component, index) in components"
                     :key="component.id"
@@ -149,6 +151,9 @@
         //用于获取右侧board到窗口的距离
         containerright:0,
         container_01:0,
+
+        //起始时间
+        starttimegolbal:0,
 
       };
     },
@@ -471,6 +476,12 @@
           })
         }
       },
+
+      //收到起始日期回调函数
+      receptionDefine(daydata){
+        this.starttimegolbal = daydata;
+        //console.log("receptionDefine->",this.starttimegolbal);
+      }
 
 
       

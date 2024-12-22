@@ -3,7 +3,7 @@
      <el-progress
         :text-inside="true"
          :percentage="Linelong"
-         :stroke-width="50"
+         :stroke-width="40"
          striped
          striped-flow
          :duration="100"

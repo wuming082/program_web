@@ -463,14 +463,18 @@ export default {
         async createline(){
             this.value1_str = String(this.value1).substring(0,15);
             this.value2_str = String(this.value2).substring(0,15);
-            const daytime =  (this.value2 - this.value1) / 86400000;
+            const daytime =  ((this.value2 - this.value1) / 86400000 );
             //86400000为一天的时间
             //根据daytime数字来创建长度
-            const daylong = 100;
+
+            //设定一天的长度
+            const daylong = 190;
             if(!await this.iscansetinboard(100 * daytime)){
                 return 0;
             }
-            this.$refs.contentoverctrl.style.display = "block";
+            if(daytime != 0){
+                this.$refs.contentoverctrl.style.display = "block";
+            }
 
             setTimeout(() => {
                 
@@ -479,11 +483,23 @@ export default {
                 this.israngetime = true;
                 this.contentlong = daylong * daytime;
             }, 100);
+
             
+
+
             if(this.optionpagedispaly){
                 this.showoptionpage();
             }
             this.$refs.ctrlmessage.style.display = 'none';
+
+            //计算该任务单元的起始时间与整体任务的起始时间的时间差（天数）
+            const timeGap = (this.value1 - this.starttime) / 86400000;//求相差的天数
+            console.log("timeGap->",timeGap);
+
+            setTimeout(() => {
+                //将任务单元移动目标地点点
+                this.element.style.left = 70 + timeGap * 200 + 'px';
+            }, 100);
             
         },
 
@@ -537,6 +553,9 @@ export default {
 
         //接收目前背景的宽度
         boardwigth:Number,
+
+        //接受起始时间
+        starttime:Object,
     },
     watch: {
         containerBound(newVal) {
@@ -558,7 +577,10 @@ export default {
 
         boardwigth(){
             //console.log("newval is become ->",newVal);
-        }
+        },
+        // starttime(newVal){
+        //     console.log("insidestarttime->",newVal);
+        // }
     }
 }
 </script>

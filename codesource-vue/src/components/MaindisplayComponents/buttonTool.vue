@@ -6,10 +6,7 @@
             <h3>create</h3>
             <el-icon size="20" style="margin: 10px;"><FolderAdd /></el-icon>
          </el-button>
-         <el-button  id="buttonCreate_starttime" type="success" color="#125B50" plain @click="CreateElement">
-            <h3>Start</h3>
-            <!-- <el-icon size="20" style="margin: 10px;"><FolderAdd /></el-icon> -->
-         </el-button>
+         
         
     </div>
 </template>
