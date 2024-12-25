@@ -47,6 +47,8 @@
                     @bemove="upgradeProgressloc"
                     @wantBelink="createlinkline"
                     @expendboard="addpageweightex"
+                    :style="{zIndex: progresszindex[index]}"
+                    @zindexRevise="Reviseindex"
                 ></progress-element-drag>
 
             </div>
@@ -155,6 +157,9 @@
         //起始时间
         starttimegolbal:0,
 
+        //用于控制每个任务单元的zindex数组
+        progresszindex:[],
+
       };
     },
     watch:{
@@ -229,7 +234,7 @@
 
         const windowWidth = window.innerWidth;
         const windowhigth = window.innerHeight;
-
+        this.progresszindex.push(0);
         this.components.push(
 
           //压入一个带有left 和 top值的键值对 用于实时获取相应子组件的位置
@@ -481,6 +486,25 @@
       receptionDefine(daydata){
         this.starttimegolbal = daydata;
         //console.log("receptionDefine->",this.starttimegolbal);
+      },
+
+      //修改目标对象的zindex数值
+      Reviseindex(index){
+        //debug
+        // console.log("Reviseindex",index);
+        
+        //先把所有的zindex的值归为为0
+        this.progresszindex.forEach((element,eleindex) => {
+          this.progresszindex[eleindex] = 0;
+          // console.log(element);
+        });
+
+        //修改相应索引的index值
+        this.progresszindex[index] = 1;
+        
+        //debug
+        // console.log("this.progresszindex[index]->",this.progresszindex[index],"index->,",index,"\n this.progresszindex->",this.progresszindex);
+
       }
 
 

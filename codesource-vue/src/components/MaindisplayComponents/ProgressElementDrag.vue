@@ -173,12 +173,18 @@ export default {
             //是否被分配时间线
             israngetime: false,
 
+            //当时间被分配后所固定的X轴
+            concretemoveX:0,
+
             //用于展示时间的字符串
             value1_str: '',
             value2_str: '',
 
             //是否已知起始时间节点starttime
             isreceptionstarttime:false,
+
+            //
+
         };
     },
     components:{
@@ -284,6 +290,9 @@ export default {
 
                 this.handleClick();
 
+                //向上抛出事件
+                this.$emit("zindexRevise",this.index);
+
                 this.isShowprogress = false;
                 event.stopPropagation();
                 if (this.element) {
@@ -307,6 +316,8 @@ export default {
         onDrag(event) {
             if (this.isDragging && this.element) {
 
+                
+
                 //当被拖动时，调用函数
                 this.callbackcommitloc();
 
@@ -317,7 +328,11 @@ export default {
                 const movePointTopadsorption  = this.adsorptionmeasureTop(movePointTop);
                 const movePointLeftadsorption = this.adsorptionmeasureLeft(movePointLeft);
 
-                this.element.style.left = `${movePointLeftadsorption}px`;
+                //如果时间线已经分配则不能再移动x轴方向
+                if(!this.israngetime){
+                    this.element.style.left = `${movePointLeftadsorption}px`;
+                }
+
                 this.element.style.top = `${movePointTopadsorption}px`;
 
             }
@@ -439,6 +454,7 @@ export default {
                 //显示设置页面
                 this.$refs.optionctrl.style.display = 'block';
                 this.$refs.optionctrl.style.left = 200 + 'px' ;
+                
             }else{
                 this.$refs.optionctrl.style.display = 'none';
                 this.$refs.optionctrl.style.left = 0 + 'px' ;
@@ -510,7 +526,7 @@ export default {
             }
 
             //计算时间线的宽度的值
-            const measurelong = daylong * daytime + ismove * daytime;
+            const measurelong = daylong * daytime + ismove * (daytime - 1);
 
             //使用await等待iscansetinboard函数返回的结果如果
             if(!await this.iscansetinboard(measurelong,destination)){
@@ -543,6 +559,10 @@ export default {
                 //将任务单元移动目标地点点
                 this.element.style.left = destination + 'px';
                 console.log("this.element.style.left->",this.element.style.left);
+            
+                //将分配好的x轴数值记录
+                this.concretemoveX = destination;
+
             }, 100);
             
         },
@@ -642,7 +662,7 @@ export default {
         boardwigth:Number,
 
         //接受起始时间
-        starttime:Object,
+        starttime:Number,
     },
     watch: {
         containerBound(newVal) {

@@ -58,6 +58,8 @@ export default{
 
             //输入框内的变量
             progressinput: '',
+
+           
         }
     },
     props:{
