@@ -18,7 +18,6 @@ if(port == "8080"){
 
 module.exports = {
   devServer: {
-    // host: '0.0.0.0',
     port: port, // 使用变量配置端口
     allowedHosts: 'all',
   },
