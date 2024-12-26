@@ -3,11 +3,16 @@
     <el-container>
       <el-header :style="headStyle">
         
-        <el-button type="primary" style="margin: 20px;" @click="drawer = true">Primary</el-button>
+        <head-display
+        :inlong = "golballine"
+        ></head-display>
+        
       </el-header>
       <el-container>
         <el-main :style="mainStyle">
-          <main-display></main-display>
+          <main-display
+            :golbalprogresslong = "golballine"
+          ></main-display>
         </el-main>
       </el-container>
     </el-container>
@@ -22,6 +27,7 @@
 //导入组件
 import ProgressLine from './components/ProgressLine.vue';
 import mainDisplay from './components/mainDisplay.vue';
+import HeadDisplay from './components/HeadDisplay.vue';
 
 export default {
   name: 'App',
@@ -30,6 +36,7 @@ export default {
     //注册组件
     mainDisplay,
     ProgressLine,
+    HeadDisplay
   },
   data() {
     return {
@@ -37,6 +44,9 @@ export default {
       //控制左侧抽屉组件
       drawer: false,
       asideDisplayBool: false,
+
+      //全局进度
+      golballine:10,
 
       headStyle: {
         gap: '10px', /* 子元素之间的间距 */

@@ -1,28 +1,64 @@
 <template>
     <div>
-        <guided-tour id="guided" :Linelong="inlong"  :displayBool="isbeDrags" :elementLoc = "(loacguide + 1000) / paperProgressWidth * 100 " ></guided-tour>
+        <!-- Linelong->进度条整体的进度 -->
+        <guided-tour 
+          id="guided" 
+          :Linelong="golbalprogresslong"  
+          :displayBool="isbeDrags" 
+          :elementLoc = "loacguide / this.paperProgressWidth" 
+          :pagemainsure = "paperProgressWidth"
+        ></guided-tour>
           <div id="scroll-container" class="scroll-container">
+            
             <div id="Maindisplay" class="scollelement" :style="{width: paperProgressWidth + 'px' }" @mousedown="startDrag">
+                <page-ctrl
+                  @addpage="addpageweight"
+                  @Shedpage="Shedpageweight"
+                ></page-ctrl>
                 
-                <!--测试按钮--->
-                <el-button  id="buttonCreate" type="success" @click="CreateElement">create</el-button>
+                <!-- 用于动态生成连接线 -->
+                <progress-link-line
+                  v-for="(component) in Lineelement"
+                  :key= component[2].id
+                  :point= component
+                  :indexline="component[2].id"
+                ></progress-link-line>
+                
+                <!-- 顶部时间线 -->
+                 <time-line
+                  :pagewidth="paperProgressWidth"
+                  :pagecontainerleft="container_01"
+                  :pagecontainerright="containerright"
+                  @is_define="receptionDefine"
+                 ></time-line>
 
-                <!-- 用于最顶上的进度条 -->
-                <progress-bar-main :Linelong="inlong" ></progress-bar-main>
-                
                 <!--用于动态生成元素-->
                 <progress-element-drag
+                    :starttime="starttimegolbal"
                     @toRightsrcoll= "srcollMove"
                     v-for="(component, index) in components"
                     :key="component.id"
                     :containerBound='container'
                     :index="index"
+                    :elementleft= component.left
+                    :elementtop = component.top
+                    :boardwigth = paperProgressWidth
                     @deletchiropractic="deletprogress"
+                    @bemove="upgradeProgressloc"
+                    @wantBelink="createlinkline"
+                    @expendboard="addpageweightex"
+                    :style="{zIndex: progresszindex[index]}"
+                    @zindexRevise="Reviseindex"
                 ></progress-element-drag>
 
             </div>
-
+            
         </div>
+      <button-tool 
+        style="z-index: 2;" 
+        @create="CreateElement"
+        ></button-tool>
+
     </div>
   </template>
 
@@ -30,22 +66,40 @@
 
 //导入组件 
 
+  //生成用于页面长度的工具栏
+  import pageCtrl from './MaindisplayComponents/pageCtrl.vue';
+  
+  //生成界面元素工具栏buttontool
+  import buttonTool from './MaindisplayComponents/buttonTool.vue';
+
+  //进程线组件
+  import progressLinkLine from './MaindisplayComponents/progressLinkLine.vue';
+
   //可以拖动的任务单元组件
   import ProgressElementDrag from './MaindisplayComponents/ProgressElementDrag.vue';
 
-  //最顶上的主任务条
-  import ProgressBarMain from './ProgressBarMain.vue';
+  // //最顶上的主任务条
+  // import ProgressBarMain from './ProgressBarMain.vue';
 
   //拖动页面时自动出现的导览条
   import guidedTour from './guidedTour.vue';
+
+  //调用element-plus组件
+  import { ElNotification } from 'element-plus'
+
+  //用于时间标注的时间线
+  import timeLine from './MaindisplayComponents/timeLine.vue';
 
   export default {
     
     //注册组件
     components: {
-      ProgressBarMain,
       guidedTour,
-      ProgressElementDrag
+      ProgressElementDrag,
+      progressLinkLine,
+      buttonTool,
+      pageCtrl,
+      timeLine,
     },
 
     data() {
@@ -54,7 +108,7 @@
         inlong: 24,
 
         //设定整体的长度px
-        paperProgressWidth: 10000,//单位px 用于控制页面横向长度
+        paperProgressWidth: 1400,//单位px 用于控制页面横向长度
 
         Mainloc: null, // 初始化为 null
 
@@ -68,6 +122,12 @@
         isbeDrags: false,
         dragTimeout: null, // 存储定时器 ID
 
+        //用于progresselementDrag计数
+        progresselementDrag_count: 0,
+
+        //用于连接线的计数
+        linkline_count: 0,
+
         //导览位置属性
         loacguide:0,
 
@@ -79,10 +139,33 @@
 
 
         highestZIndex: 0,
+
+        //用于控制连接线的数组
+        Lineelement:[],
+
+        //用于保存 哪一个任务单元存在 哪一个 连接线的端点
+        matchprogresstoline:{},
+
+        //一个保存连接两点的位置的函数 当我点击任务条连接时，如果这个栈没有保存两个位置 ，就把点击的任务单元的位置 压栈
+        //如果发现压栈完 后 保存了两个连接点位置 就动态生成连接点
+        linkstack:[],
+
+        //用于获取右侧board到窗口的距离
+        containerright:0,
+        container_01:0,
+
+        //起始时间
+        starttimegolbal:0,
+
+        //用于控制每个任务单元的zindex数组
+        progresszindex:[],
+
       };
     },
     watch:{
-
+      golbalprogresslong(newval){
+        this.inlong = newval;
+      }
     },
 
     //生命周期钩子
@@ -93,6 +176,8 @@
       mounted()就会开始执行，来完成最后的成员变量加载
     */
     mounted() {
+      
+
       // 在组件挂载后获取 DOM 元素
       this.Mainloc = document.getElementById('Maindisplay');
       // 绑定事件处理程序的上下文
@@ -102,12 +187,13 @@
       const container = document.getElementById('scroll-container');
       const content = container.clientWidth;
 
-      this.plusMore = content/this.paperProgressWidth * content + 60;
-      console.log('content',this.plusMore);
-
-      this.Mainloc.addEventListener('mousemove',this.updateBoundcontainer);
+      const windowWidth = window.innerWidth;
+      this.paperProgressWidth = windowWidth;
 
       
+      this.plusMore = content/this.paperProgressWidth * content + 60;
+      this.Mainloc.addEventListener('mousemove',this.updateBoundcontainer);
+
 
     },
     methods: {
@@ -145,9 +231,16 @@
         在页面上 显示的 任务单元组件的个数
       */ 
       CreateElement(){
-        this.components.push({
-          id: this.highestZIndex ++
-        });
+
+        const windowWidth = window.innerWidth;
+        const windowhigth = window.innerHeight;
+        this.progresszindex.push(0);
+        this.components.push(
+
+          //压入一个带有left 和 top值的键值对 用于实时获取相应子组件的位置
+          {left: -1 * this.container + windowWidth - 250 ,top: windowhigth - 350 , id: this.progresselementDrag_count++ },  
+
+        );
       },
 
       //开始拖动回调
@@ -191,8 +284,15 @@
         this.element = document.getElementById('scroll-container');
         //累加位移
         this.element.scrollLeft = (shiftX - Moveat) +  this.movePlus;
+
         this.elementsrcollLocation = this.element.scrollLeft;
-        this.loacguide = this.elementsrcollLocation ;
+
+        const move = document.getElementById('Maindisplay');
+        this.loacguide = - move.getBoundingClientRect().left ;
+
+        this.container_01 = - move.getBoundingClientRect().left ;
+        this.containerright = move.getBoundingClientRect().right;
+        // console.log("containerright->",this.containerright);
       },
 
       //停止回调 移除相应的监听事件 这样页面就不会跟着你的鼠标移动了
@@ -278,8 +378,140 @@
       */
       deletprogress(index){
         this.components.splice(index,1);
+      },
+
+      /*
+        # 2024/11/17
+        # dreamsky
+        index 为子组件的索引，知道索引就可以知道 哪一个子组件被拖动了
+        left 为子组件被拖动后left的位置
+        top 为子组件被拖动后的top位置
+      */
+      //接收的是一个数组 更新各个子组件的位置 三个属性值 index left top 依次排序
+      upgradeProgressloc(locbemove){
+        const indexin =  locbemove[0];
+        this.components[indexin].left = locbemove[1];
+        this.components[indexin].top = locbemove[2];
+        console.log('bemove: index ',indexin, 'left ',locbemove[1],'top ',locbemove[2]);
+
+
+        //寻找目标 --> 连接线端点 //通过indexin获取到了连接线的索引 用 this.Lineelement控制相应的连接线
+        let goalLine_id = this.matchprogresstoline[indexin];
+         
+        //先判断lineelement数组内是否有元素能够被索引
+        if(this.Lineelement.length && this.Lineelement[goalLine_id]){
+          
+          //更新连接线的 端点
+          this.Lineelement[goalLine_id][0] = {left: locbemove[1] + 200, top: locbemove[2] + 60};
+          this.Lineelement[goalLine_id][1] = {left: locbemove[1] + 200, top: locbemove[2] + 60};
+        }
+      },
+
+
+      //生成任务连接线createlinkline
+      /*
+        # 2024/11/17
+        # dreamsky
+
+        index接收的为 任务单元的index索引
+      */
+      createlinkline(index){
+
+        //设置标记形成 连接线唯一id
+        let linkline_id = 0;
+
+        //添加到映射表当中 [任务单元的index(也就是key值)”键“]  和  任务线的唯一key值”对“
+        if(!(index in this.matchprogresstoline)){                       
+
+          //对于每一个连接线设立唯一的 linkline_id 值
+          linkline_id = this.linkline_count++;
+
+          //添加到映射表当中 
+          this.matchprogresstoline[index] = linkline_id;
+        }else{
+          //如果该元素已经被 添加过键值 就直接跳过该函数
+          return;
+        }
+
+        //创建一个新的连接线 
+        /*
+          # 2024/11/17
+          # dreamsky
+
+          推入一个数组 
+          第一个数组元素保存着 第一个端点的生成的位置
+          第二个数组元素保存着 第二个端点的生成位置
+          第三个数组元素保存着 生成的该连接线 为一的id值 用做key索引（用于之后增删查改）
+
+        */ 
+        this.Lineelement.push([
+            {left: this.components[index].left + 200, top: this.components[index].top + 60},
+            {left: this.components[index].left + 200, top: this.components[index].top + 60},
+            {id: linkline_id}
+          ],
+        )
+        console.log('createlinkline this.components[index].left',this.components[index].left);
+
+      },
+
+      //增加页面长度的回调函数
+      addpageweight(){
+        this.paperProgressWidth += 500;
+      },
+
+      addpageweightex(expendNumber){
+        this.paperProgressWidth += expendNumber;
+      },
+
+      //减少页面长度
+      Shedpageweight(){
+        const windowWidth = window.innerWidth;
+        if(this.paperProgressWidth > windowWidth){
+          if(this.paperProgressWidth - windowWidth < 500){
+            this.paperProgressWidth = windowWidth;
+          }else{
+            this.paperProgressWidth -= 500;
+          }
+        }else{
+          ElNotification({
+            title: '超过阈值',
+            message: '页面已经达到最短',
+            type: 'warning',
+            // position: 'bottom-left',
+          })
+        }
+      },
+
+      //收到起始日期回调函数
+      receptionDefine(daydata){
+        this.starttimegolbal = daydata;
+        //console.log("receptionDefine->",this.starttimegolbal);
+      },
+
+      //修改目标对象的zindex数值
+      Reviseindex(index){
+        //debug
+        // console.log("Reviseindex",index);
+        
+        //先把所有的zindex的值归为为0
+        this.progresszindex.forEach((element,eleindex) => {
+          this.progresszindex[eleindex] = 0;
+          // console.log(element);
+        });
+
+        //修改相应索引的index值
+        this.progresszindex[index] = 1;
+        
+        //debug
+        // console.log("this.progresszindex[index]->",this.progresszindex[index],"index->,",index,"\n this.progresszindex->",this.progresszindex);
+
       }
+
+
       
+    },
+    props:{
+      golbalprogresslong:Number,
     }
   };
   </script>
@@ -301,6 +533,8 @@
   }
 
   .scroll-container{
+    display: flex;
+    flex-direction: row; /* 设置主轴为水平方向 */
     position: absolute;
     left: 0px;
     right: 0px;
@@ -320,5 +554,6 @@
     background-size: 25px 25px; 
     /* 设置点的间距 */
   }
+
   </style>
   

@@ -1,8 +1,9 @@
 <template>
     <div id="sample">
      <el-progress
+        :text-inside="true"
          :percentage="Linelong"
-         :stroke-width="25"
+         :stroke-width="40"
          striped
          striped-flow
          :duration="100"
