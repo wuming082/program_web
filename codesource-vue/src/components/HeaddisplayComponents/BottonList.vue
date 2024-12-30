@@ -6,7 +6,7 @@
     <div>
         <div id="backgrand">
             <el-button id="person" size="large"  />
-            <el-button id="message" color="#F09319" type="success" plain>Success</el-button>
+            <el-button id="message" color="#F09319" type="success" plain>containes</el-button>
             <el-button id="avater">pic</el-button>
         </div>
     </div>
