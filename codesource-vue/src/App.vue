@@ -46,7 +46,7 @@ export default {
       asideDisplayBool: false,
 
       //全局进度
-      golballine:10,
+      golballine:68,
 
       headStyle: {
         gap: '10px', /* 子元素之间的间距 */
@@ -57,7 +57,7 @@ export default {
         left: '0px',
         right: '0px',
         top: '0px',
-        height: '67px',
+        height: '65px',
         borderBottom: '0.4px solid #c8c8c8',/* 黑色的2像素描边 */
         position: 'fixed'
       },
