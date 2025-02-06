@@ -25,6 +25,7 @@
                         <!-- <el-icon size="20" style="margin: 10px;"><FolderAdd /></el-icon> -->
                     </el-button>
                 </div>
+                
             </div>
         </div>
         <!-- <div id="lineElement_end" :style="{right: ctrlendmove + 'px',}">
@@ -34,7 +35,11 @@
         <div style="right: 0px;" id="start_end"></div>
     </div>
     <!-- <div id="lineElement_done"></div> -->
-    
+    <div id="teach">
+        <h3 style="position: absolute; top:-10px; left: 35px; color: #646464;;">在此处设置起始时间以开始</h3>
+        <img id="teachimg" style="position: absolute; top: 40px; left: 15px; border-radius: 10px; height: 40px; width: auto;"  src="../../assets/teach.png" alt="teach">
+        <div id="understand">知道了</div> 
+    </div>
 </template>
 <script>
 import { ElNotification } from 'element-plus';
@@ -54,7 +59,7 @@ export default{
             is_Definite:false,
 
             //输入框bool
-            inputdispaly:false,
+            inputdispaly:true,
 
             //输入框内的变量
             progressinput: '',
@@ -250,18 +255,52 @@ export default{
 #message{
     border-radius: 5px;
     width: 70px;
-    height: 30px;
-    position: absolute;
+    height: 31px;
+    position: relative;
     left: 210px;
-    top: 20px;
+    top: 14px;
 }
 #inputborad{
     position: absolute;
-    top: 19px;
+    top: 13px;
     width: 195px;
     height: 30px;
     border-radius: 10px;
     -webkit-user-select: none; /* 适用于谷歌浏览器和Safari */ -moz-user-select: none; /* 适用于火狐浏览器 */ -ms-user-select: none; /* 适用于Internet Explorer/Edge */ user-select: none; /* 适用于支持CSS3的浏览器 */
     border: 1px solid #ccc; /* 自定义边框样式 */
+    outline: none;
+    box-shadow: none;
+    font-size: 15px;
+    font-weight: 700;
+}
+#teach{
+    width: 300px;
+    height: 115px;
+    background-color: rgb(252, 252, 252);
+    position: absolute;
+    left: 70px;
+    top: 86px;
+    border-radius: 10px;
+    opacity: 100%;
+    outline: 1.5px solid rgb(182, 182, 182);
+    box-shadow: 0px 6px 6px rgb(214, 214, 214);
+}
+#teachimg{
+    box-shadow: 0px 0px 0px rgb(216, 216, 216);
+}
+#understand{
+    width: 60px;
+    height: 26px;
+    background-color: rgba(83, 179, 27, 0.582);
+    position: absolute;
+    bottom: 7px;
+    right: 14px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px rgb(236, 236, 236);
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    outline: 1px solid rgb(92, 92, 92);
 }
 </style>
