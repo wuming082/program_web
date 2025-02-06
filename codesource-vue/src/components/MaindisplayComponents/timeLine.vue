@@ -302,5 +302,6 @@ export default{
     color: rgb(255, 255, 255);
     text-align: center;
     outline: 1px solid rgb(92, 92, 92);
+    
 }
 </style>
