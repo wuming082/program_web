@@ -1,8 +1,12 @@
 <template>
     <div id="Head">
         <show-time></show-time>
-        <el-button id="projectName">
-            project name
+        <el-button @click="changename" id="projectName">
+            <h3  v-if="!displayinput" style="opacity: 70%;"> 
+                {{ inputext }}
+                
+            </h3>
+            <input ref="inputboard" v-if="displayinput" id="inputname" type="text" @keyup.enter="enterdown" v-model="inputext">
         </el-button>
         <el-button id="pieChartButton">
             <el-progress
@@ -40,6 +44,15 @@ export default{
                 { color: '#1989fa', percentage: 80 },
                 { color: '#6f7ad3', percentage: 100 },
             ],
+
+            //项目默认名称
+            //输入框文字
+            inputext:"project name",
+
+            //是否展示输入框
+            displayinput:false,
+
+            
         }
     },
     components:{
@@ -51,6 +64,28 @@ export default{
 },
     props:{
         inlong:Number
+    },
+    methods:{
+        changename(){
+            if(this.displayinput){
+                return -1;//告知还没有输入完毕
+            }
+            //防止冒泡
+            // event.stopPropagation();
+            //更换
+            this.displayinput = !this.displayinput;
+            this.projectname = 'helloworld'
+            if(this.displayinput){
+                //自动聚焦到input
+                setTimeout(() => {
+                    this.$refs.inputboard.focus();   
+                }, 10);
+            }
+        },
+        enterdown(){
+            this.projectname = this.inputext;
+            this.displayinput = false;
+        }
     }
 }
 </script>
@@ -125,7 +160,7 @@ export default{
     position: fixed; /* 固定在页面上 */
     top: 0px; 
     left: 50%; /* 水平居中 */
-    transform: translateX(-50%); /* 通过偏移实现精确居中 */
+    transform: translateX(-60%); /* 通过偏移实现精确居中 */
     text-align: center; /* 文本居中 */
     width: 30%; /* 宽度根据内容自适应 */
     height: 62px;
@@ -149,12 +184,12 @@ export default{
 }
 
 #projectName:hover {
-    transform: translateX(-50%) translateY(2px); /* 悬浮时略微下凹 */
+    transform: translateX(-60%) translateY(2px); /* 悬浮时略微下凹 */
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* 悬浮时添加阴影 */
 }
 
 #projectName:active {
-    transform: translateX(-50%) translateY(4px); /* 点击时进一步下凹 */
+    transform: translateX(-60%) translateY(4px); /* 点击时进一步下凹 */
     color: #303030; /* 点击时颜色加深 */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 点击时阴影变小 */
 }
@@ -174,5 +209,19 @@ export default{
     right: 80px; /* 距离右侧距离 */
     z-index: 1000; /* 确保元素在最上层 */
 }
-
+#inputname{
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    outline: none;
+    font-size: 35px;
+    opacity: 70%;
+    font-weight: 700;
+    text-align:center;
+    border-radius: 10px;
+    border: none;  /* 去除边框 */
+    box-shadow: none; /* 去除阴影效果 */
+}
 </style>
